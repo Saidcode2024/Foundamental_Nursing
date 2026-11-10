@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mobility & Body Mechanics</title>
+<style>
+:root{--p:#0f766e;--pl:#e6f4f1;--bd:#b7ddd6;--tx:#1f2937;--gr:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--tx);line-height:1.55;font-size:16px}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--bd);padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+h1{font-size:16px;margin:0;color:var(--p)}
+button{font:inherit;cursor:pointer}
+#tg{background:var(--p);color:#fff;border:0;border-radius:20px;padding:7px 14px;font-size:14px}
+main{max-width:820px;margin:0 auto;padding:10px}
+details.card{border:1px solid var(--bd);border-radius:14px;margin:10px 0;background:#fff;overflow:hidden}
+details.card>summary{list-style:none;padding:14px;font-weight:700;color:var(--p);background:var(--pl);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"▾"}
+details[open]>summary::after{content:"▴"}
+.body{padding:12px 14px}
+.ln{margin:8px 0}
+.ar{font-size:13.5px;color:var(--gr);direction:rtl;text-align:right;margin-top:2px;line-height:1.7}
+body.noar .ar{display:none}
+mark{background:#fff176;padding:0 3px;border-radius:3px}
+h3{color:var(--p);font-size:15px;margin:16px 0 6px;border-bottom:1px solid var(--bd);padding-bottom:3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:8px 0}
+.pop{border:1px solid var(--bd);border-radius:10px;background:var(--pl);padding:10px;cursor:pointer}
+.pt{font-weight:600;color:var(--p)}
+.pt::after{content:" ＋";color:var(--gr)}
+.pop.open .pt::after{content:" －"}
+.pb{display:none;margin-top:6px;background:#fff;border-radius:8px;padding:6px 8px}
+.pop.open .pb{display:block}
+.tbs{display:flex;flex-wrap:wrap;gap:6px}
+.tb{border:1px solid var(--bd);background:#fff;color:var(--p);border-radius:16px;padding:6px 12px;font-size:14px}
+.tb.on{background:var(--p);color:#fff}
+.tp{display:none;padding-top:8px}
+.tp.on{display:block}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--bd);padding:7px;vertical-align:top;text-align:left}
+th{background:var(--pl);color:var(--p)}
+.info{background:var(--pl);border:1px dashed var(--p);border-radius:10px;padding:10px;margin-top:8px;min-height:48px}
+.info .ar{display:block}
+.sw{text-align:center}
+.sw svg{max-width:300px;width:100%;height:auto}
+svg [data-info]{cursor:pointer}
+.stp{border:1px solid var(--bd);border-radius:10px;padding:10px;margin:8px 0}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.nav button,#rs{background:var(--p);color:#fff;border:0;border-radius:8px;padding:7px 14px}
+.q{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:10px 0}
+.o{display:block;width:100%;text-align:left;border:1px solid var(--bd);background:#fff;border-radius:10px;padding:9px;margin:6px 0}
+.o.ok{background:#d1fae5;border-color:#10b981}
+.o.no{background:#fee2e2;border-color:#ef4444}
+.big{font-size:20px}
+</style></head><body>
+<header><h1>🩺 Mobility & Body Mechanics</h1><button id="tg">إخفاء العربي</button></header>
+<main id="app"></main>
+<script>
+function L(e,a){return '<div class="ln"><div>'+e+'</div><div class="ar">'+a+'</div></div>';}
+function C(e,a){return e+'<div class="ar">'+a+'</div>';}
+function P(a){return '<div class="grid">'+a.map(function(x){return '<div class="pop"><div class="pt">'+x[0]+'</div><div class="pb">'+L(x[1],x[2])+'</div></div>';}).join('')+'</div>';}
+function TB(h,r){return '<div class="tw"><table><tr>'+h.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>'+r.map(function(x){return '<tr>'+x.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')+'</table></div>';}
+function T(a){var b='<div class="tabs"><div class="tbs">',p='<div class="tps">';a.forEach(function(x,i){b+='<button class="tb'+(i?'':' on')+'">'+x[0]+'</button>';p+='<div class="tp'+(i?'':' on')+'">'+x[1]+'</div>';});return b+'</div>'+p+'</div></div>';}
+function ST(a){return '<div class="stp" data-i="0">'+a.map(function(x){return '<div class="sp">'+L(x[0],x[1])+'</div>';}).join('')+'<div class="nav"><button class="bk">◀ Back</button><b class="ct"></b><button class="nx">Next ▶</button></div></div>';}
+function upd(s){var i=+s.dataset.i,sp=s.querySelectorAll('.sp');sp.forEach(function(e,k){e.style.display=(k===i)?'block':'none';});s.querySelector('.ct').textContent='Step '+(i+1)+'/'+sp.length;}
+
+var S=[];
+
+/* 1 */
+S.push(['🎯 1. Objectives & Definitions',
+L(`<b>Objectives:</b> 1) Physiology of movement 2) Factors affecting <mark>mobility & activity</mark> 3) Effect of exercise & immobility on body systems 4) Factors affecting mobility & body alignment 5) Demonstrate proper <mark>body mechanics</mark> 6) Recognize <mark>mobility assisting devices</mark>`,
+`الأهداف: فسيولوجيا الحركة، العوامل المؤثرة على الحركة، تأثير الرياضة وعدم الحركة على أجهزة الجسم، العوامل المؤثرة على وضع الجسم، ميكانيكا الجسم الصحيحة، وأجهزة المساعدة على الحركة.`)+
+'<h3>Definitions</h3>'+
+L(`<mark>Mobility</mark>: the ability to move <mark>freely, rhythmically and purposefully</mark> in the environment.`,`الحركة (Mobility): إنك تتحرك بحرية وبانتظام وبهدف في المكان اللي حواليك.`)+
+L(`Mobility = ability to engage in <mark>activity</mark> and <mark>unrestricted movement</mark>: walking, running, sitting, standing, lifting, pushing, pulling and <mark>activities of daily living (ADL)</mark>.`,`يعني تقدر تمشي وتجري وتقعد وتقف وترفع وتزق وتشد، وتعمل أنشطة حياتك اليومية (ADL).`)+
+TB(['','Definition','Key characteristics'],[
+['<b>Immobility</b>',C(`<mark>Unavoidable restriction</mark> of movement in any area of a patient's life`,`تقييد للحركة مش بإيد المريض في أي جزء من حياته`),
+C(`- Often <mark>temporary</mark> or situational<br>- May result from surgery, injury, or illness<br>- Can lead to <mark>pressure ulcers, muscle atrophy, pneumonia</mark>`,`غالبًا مؤقت، بسبب عملية أو إصابة أو مرض، ومضاعفاته: قرح الفراش وضمور العضلات والالتهاب الرئوي`)],
+['<b>Disability</b>',C(`<mark>Persistent</mark> physical or mental weakness that prevents normal daily activities`,`ضعف جسدي أو عقلي مستمر بيمنع الأنشطة اليومية الطبيعية`),
+C(`- Usually <mark>long-term or permanent</mark><br>- May be congenital or acquired<br>- Can involve physical, sensory, or cognitive impairments`,`غالبًا طويل المدى أو دائم، ممكن يكون خلقي أو مكتسب، وممكن يكون حركي أو حسي أو إدراكي`)]])]);
+
+/* 2 */
+S.push(['🦴 2. Physiology of Movement',
+L(`Mobility depends on the successful interaction among the <mark>skeleton, the muscles, and the nervous system</mark>.`,`الحركة بتعتمد على تعاون 3 حاجات: الهيكل العظمي والعضلات والجهاز العصبي.`)+
+'<h3>1. Skeletal system</h3>'+
+L(`Includes <mark>bones, cartilage, ligaments, and tendons</mark>. 💡 Cartilage = غضروف، Ligament = رباط بيربط عظمة بعظمة، Tendon = وتر بيربط العضلة بالعظمة.`,`الجهاز الهيكلي بيشمل العظام والغضاريف والأربطة والأوتار.`)+
+P([['🏗️ Framework','Forms the <mark>framework</mark> of the body','بيكوّن هيكل الجسم'],['🛡️ Protects','<mark>Protects</mark> the internal organs','بيحمي الأعضاء الداخلية'],['🩸 Blood cells','<mark>Produces blood cells</mark>','بيصنع خلايا الدم'],['🧂 Stores','Stores <mark>mineral salts (e.g. calcium)</mark> and fat','بيخزن أملاح معدنية زي الكالسيوم وكمان دهون']])+
+L(`Bones = <mark>hard outer shell + spongy interior</mark>. Total = <mark>206 bones</mark>.`,`العظمة قشرة صلبة من برا وإسفنجية من جوه. عدد العظام 206.`)+
+P([['📏 Long','<mark>Femur</mark> and <mark>humerus</mark>','عظمة الفخذ وعظمة الذراع'],['🔹 Short','<mark>Phalanges</mark> and <mark>metacarpals</mark>','سلاميات الأصابع وعظام الكف'],['⬜ Flat','<mark>Sternum</mark> and <mark>cranial</mark> bones','عظمة القص وعظام الجمجمة'],['🧩 Irregular','<mark>Vertebrae</mark> and <mark>tarsal</mark> bones','الفقرات وعظام رسغ القدم']])+
+'<h3>2. Muscles</h3>'+
+L(`Muscles make up <mark>40% to 50%</mark> of body weight. When they <mark>contract</mark> they cause movement. Types: skeletal, smooth, cardiac.`,`العضلات 40–50% من وزن الجسم، ولما تنقبض بتحرك الجسم، وأنواعها: هيكلية وملساء وقلبية.`)+
+P([['💪 Skeletal','<mark>Moves bones and joints</mark>','بتحرك العظام والمفاصل'],['🫃 Smooth','Occurs in the <mark>digestive tract</mark> and other hollow structures','موجودة في الجهاز الهضمي والأعضاء المجوفة'],['❤️ Cardiac','Unique muscle that can <mark>contract spontaneously</mark>','عضلة القلب بتنقبض لوحدها تلقائيًا']])+
+'<h3>3. Nervous system</h3>'+
+L(`<mark>Peripheral nervous system</mark> controls the movement of the musculoskeletal system. It has 2 parts: Somatic and Autonomic (Sympathetic + Parasympathetic).`,`الجهاز العصبي الطرفي بيتحكم في حركة العضلات والعظام، وبينقسم: جسدي (Somatic) وذاتي (Autonomic) وده فيه سمبثاوي وباراسمبثاوي.`)+
+P([['🎯 Somatic','Innervates the <mark>voluntary skeletal muscles</mark>','بيغذي العضلات الإرادية اللي بتتحكم فيها'],['⚙️ Autonomic','Has 2 branches: <mark>Sympathetic</mark> and <mark>Parasympathetic</mark>','ذاتي، وليه فرعين'],['⚡ Sympathetic','Branch of the autonomic system','فرع من الجهاز الذاتي'],['🌿 Parasympathetic','Innervates <mark>involuntary muscles</mark> such as heart, blood vessels, and glands','بيغذي العضلات اللاإرادية زي القلب والأوعية والغدد']])]);
+
+/* 3 */
+S.push(['🧭 3. Factors Affecting Mobility & Activity',
+P([['1️⃣ Health status',`General health influences <mark>desire for exercise and activity tolerance</mark>. A compromised body system may affect mobility, and lack of activity affects it back. Diseases can negatively influence <mark>body alignment, balance, coordination and joint mobility</mark>.`,`صحتك العامة بتأثر على رغبتك في الرياضة وقدرتك تتحمل المجهود. وأي مرض بيأثر على وضع الجسم والتوازن والتناسق وحركة المفاصل.`],
+['2️⃣ Developmental stage',`Affects the <mark>parameters of targeted mobility levels</mark>.`,`مرحلة العمر بتحدد مستوى الحركة المطلوب.`],
+['3️⃣ Nutrition',`<mark>Obesity</mark> → health problems → less activity → more obesity. <mark>Joint injuries and osteoarthritis</mark> are more common with obesity. Unhealthy eating: large portions, convenience foods, diet high in <mark>saturated fat and simple carbohydrates</mark>.`,`السمنة بتسبب مشاكل صحية فتقل الحركة فتزيد السمنة. وخشونة المفاصل أكتر مع السمنة. والأكل الغلط: وجبات كبيرة وأكل جاهز ودهون مشبعة ونشويات بسيطة.`],
+['4️⃣ Environment',`Home is mobility friendly if <mark>free of hazards</mark>. Work: <mark>repetitive hand work</mark> (key-stroking, sewing) impairs mobility and worsens arthritis. <mark>Sedentary lifestyle</mark> → muscle atrophy, weakened bones, lack of motivation and energy.`,`البيت الآمن من غير مخاطر بيسهّل الحركة. والشغل اللي فيه حركة يد متكررة بيضر ويزوّد التهاب المفاصل. والخمول بيسبب ضمور عضلات وضعف عظام وقلة نشاط.`]])+
+'<h3>Common age-related musculoskeletal trauma</h3>'+
+TB(['Age','Common trauma'],[
+['0–18 months','Falls'],['18 months–6 years','Falls'],['6–20 years','Sports-related injuries, Motorcycle accidents'],['20–50 years','Sports-related injuries, Stress or overuse injuries (e.g. <mark>tendonitis</mark>)'],['50–65+ years','Recreation-related injuries, Falls, <mark>Pathological fractures</mark>, Pedestrian injuries']])+
+'<div class="ar">الأطفال: وقوع. 6–20: رياضة وحوادث موتوسيكل. 20–50: رياضة وإصابات إجهاد زي التهاب الأوتار. فوق 50: إصابات ترفيه ووقوع وكسور مرضية وحوادث مشاة.</div>']);
+
+/* 4 */
+S.push(['🏃 4. Benefits of Exercise on Body Systems',
+P([['🦴 Musculoskeletal',`1. Increase and maintain <mark>muscle tone, size, shape</mark><br>2. Maintain <mark>bone density & strength</mark><br>3. Increase joint mobility, flexibility and <mark>range of motion</mark>`,`بيحافظ على قوة العضلات وكثافة العظام ويزوّد مرونة المفاصل ومدى الحركة.`],
+['❤️ Cardiovascular',`Improves function by increasing <mark>cardiac output</mark> and strength of heart muscle contraction`,`بيحسّن شغل القلب بزيادة النتاج القلبي وقوة انقباض عضلة القلب.`],
+['🫁 Respiratory',`Improves <mark>gas exchange</mark> by increasing ventilation & oxygenation`,`بيحسّن تبادل الغازات بزيادة التهوية والأكسجة.`],
+['🍽️ GI tract',`Improves <mark>appetite, digestion and elimination</mark>`,`بيحسّن الشهية والهضم والإخراج.`],
+['🔥 Metabolic',`Increases <mark>metabolic rate</mark> → more body heat production and calorie use`,`بيزوّد معدل الأيض فيزيد الحرارة وحرق السعرات.`],
+['🚰 Urinary',`Improves <mark>excretion of body waste</mark> through the kidneys`,`بيحسّن طرد الفضلات عن طريق الكلى.`],
+['🧴 Integumentary',`Maintains <mark>skin integrity</mark>`,`بيحافظ على سلامة الجلد.`],
+['🧠 Psycho-neurologic',`1. Enhances <mark>well-being</mark>, relieves stress<br>2. Improves <mark>sleep quality</mark><br>3. Improves self concept & self esteem by <mark>decreasing depression</mark>`,`بيحسّن الحالة النفسية ويقلل التوتر ويحسّن النوم والثقة بالنفس ويقلل الاكتئاب.`]])]);
+
+/* 5 */
+S.push(['🛌 5. Effects of Immobility',
+T([
+['🦴 MSK',L(`<mark>Decrease in muscle tonus</mark>`,`قلة قوة شد العضلة.`)+L(`<mark>Atrophy</mark>: decrease in the <mark>size</mark> of a muscle. Muscles lose strength, endurance and mass <mark>very quickly</mark> when inactive.`,`الضمور: العضلة بتصغر وتفقد قوتها وتحملها بسرعة لما متتحركش.`)+L(`<mark>Demineralization</mark>: loss of <mark>calcium</mark> from bones due to lack of activity and weight bearing → <mark>osteoporosis</mark> and possible spontaneous fractures.`,`فقدان الكالسيوم من العظام فيحصل هشاشة وكسور تلقائية.`)+L(`<mark>Contracture</mark>: <mark>permanent shortening/tightening</mark> of a muscle due to prolonged immobility → loss of function.`,`انكماش دائم في العضلة بسبب قلة الحركة الطويلة ويفقدها وظيفتها.`)],
+['❤️ CVS',L(`↑ workload on the heart, ↑ heart rate, ↑ stroke volume. Prolonged inactivity → <mark>sluggish circulation</mark> and <mark>pooling of blood in veins of lower extremities</mark>.`,`القلب بيشتغل أكتر والدم بيتجمع في أوردة الرجلين.`)+L(`<mark>Phlebitis</mark>: inflammation of a vein.`,`التهاب في الوريد.`)+L(`<mark>Thrombus</mark>: a blood clot that <mark>originates at the site</mark> of obstruction.`,`جلطة اتكوّنت في مكانها.`)+L(`<mark>Embolism</mark>: a clot that <mark>dislodged</mark> from its origin and moved until it got stuck, causing obstruction.`,`جلطة اتفكت من مكانها وسافرت لحد ما اتحشرت وسدّت.`)+L(`<mark>Orthostatic hypotension</mark>: drop in <mark>systolic BP of 20 mmHg</mark> upon moving to upright position. Signs: dizziness, fainting, pale, sweating, fast heartbeat.`,`هبوط الضغط الانتصابي: الضغط الانقباضي ينزل 20 لما تقف أو تقعد، وعلاماته: دوخة وإغماء وشحوب وعرق وسرعة دقات القلب.`)],
+['🫁 Resp',L(`↓ oxygen & ↑ carbon dioxide in blood due to <mark>poor gas exchange</mark>. Inability to deep breathe & cough → <mark>secretions pooling</mark> in lungs → <mark>hypostatic pneumonia</mark>.`,`الأكسجين بيقل وثاني أكسيد الكربون بيزيد، والإفرازات بتتجمع في الرئة فيحصل التهاب رئوي هبوطي.`)+L(`<mark>Atelectasis</mark>: <mark>collapsed small air sacs</mark> (they supply oxygen and remove CO₂). Causes obstruction of smaller airways and <mark>increased respiratory rate</mark>.`,`انهيار الحويصلات الهوائية الصغيرة فتنسد الشعب الصغيرة ويزيد معدل التنفس.`)],
+['🧴 Skin',L(`Common effect = <mark>pressure ulcer</mark>: compression of soft tissue and/or bony prominence between mattress or adaptive devices.`,`قرح الضغط: أنسجة اتضغطت بين العظم والمرتبة أو الأجهزة.`)+L(`Begins with <mark>reddish areas</mark> and may develop into <mark>large open deep wounds</mark>.`,`بتبدأ بمنطقة حمراء وممكن تبقى جروح مفتوحة وعميقة.`)+L(`Pressure areas: back of head & ears, shoulder, elbow, hip, lower back & buttocks, inner knees, heel.`,`أماكن القرح: ورا الراس والودان، الكتف، الكوع، الورك، أسفل الضهر والمؤخرة، باطن الركبة، الكعب.`)],
+['🚰 Urinary',L(`<mark>Stasis of urine</mark> leads to: <mark>infections</mark> of the urinary system, development of <mark>stones</mark>, <mark>bladder distention</mark> and <mark>incontinence</mark> of urine.`,`ركود البول بيسبب التهابات وحصوات وانتفاخ المثانة وسلس البول.`)],
+['🍽️ GI',L(`<mark>Constipation</mark> and <mark>impaction</mark> of stool. <mark>Anorexia</mark> (loss of appetite).`,`إمساك وانحشار البراز وفقدان الشهية.`)],
+['🧠 Psychosocial',L(`<mark>Exaggerated emotional responses</mark>, disorientation, feelings of <mark>dependency</mark>, inability to sleep well, fear.`,`ردود فعل انفعالية مبالغ فيها، تشوش، إحساس بالاعتماد على غيره، صعوبة في النوم وخوف.`)]])+
+'<h3>Problems leading to immobility</h3>'+
+P([['🩹 1','Trauma, surgery','إصابات وعمليات'],['🔥 2','Burn, pain','حروق وألم'],['🧬 3','Multiple sclerosis, cerebrovascular accident (CVA), COPD','تصلب متعدد، جلطة أو سكتة دماغية، انسداد رئوي مزمن'],['😔 4','Depression','اكتئاب'],['🦴 5','Cast, traction','جبس وشد'],['⛓️ 6','Prisoners','السجناء'],['⚖️ 7','Morbid obesity','سمنة مفرطة']])]);
+
+/* 6 */
+S.push(['🧍 6. Body Mechanics & Posture',
+L(`Common injuries among health care team = <mark>severe musculoskeletal strains</mark>. Many can be avoided by proper body mechanics.`,`أكتر إصابات الفريق الطبي شد عضلي شديد، وبتتجنب باستخدام ميكانيكا الجسم الصح.`)+
+L(`<mark>Body mechanics</mark> = the way we move our bodies. It includes <mark>4 components</mark>:`,`ميكانيكا الجسم: إزاي بنحرك جسمنا، وليها 4 مكونات:`)+
+P([['1️⃣ Body alignment','Posture','وضع الجسم'],['2️⃣ Balance','','التوازن'],['3️⃣ Coordination','','التناسق'],['4️⃣ Joint mobility','','حركة المفاصل']])+
+L(`Definitions: 1) Using the <mark>correct muscles</mark> to complete a task safely without injury. 2) How we use our bodies in ADL, especially <mark>taking care of our backs</mark>. 3) Proper use of muscle groups to keep <mark>healthy posture</mark> during movement, lifting, bending. 4) Coordinated, safe use of the body to produce motion and <mark>maintain balance</mark>.`,`المعنى: استخدام العضلات الصح بأمان من غير إصابة، وحماية الضهر، ووضع جسم سليم وقت الحركة والرفع والانحناء، وحركة منسقة بتحافظ على التوازن.`)+
+'<h3>Body alignment</h3>'+
+L(`Body alignment (posture): proper posture places the spine in a <mark>neutral (resting) position</mark>. There are <mark>4 natural curves</mark> of the spine. 👇 Tap a curve.`,`وضع الجسم الصح بيخلي العمود الفقري في وضع الراحة، وفيه 4 انحناءات طبيعية. اضغط على كل واحد.`)+
+`<div class="sw"><svg viewBox="0 0 260 320"><circle cx="120" cy="14" r="13" fill="#e6f4f1" stroke="#0f766e"/><g fill="none" stroke-width="14" stroke-linecap="round">
+<path data-info="<b>Cervical curve</b> (neck)<span class='ar'>انحناء الرقبة</span>" d="M120 32 Q103 57 120 86" stroke="#9fd6cc"/>
+<path data-info="<b>Thoracic curve</b> (upper back, chest)<span class='ar'>انحناء الصدر (أعلى الضهر)</span>" d="M120 86 Q150 135 120 184" stroke="#5fb5a8"/>
+<path data-info="<b>Lumbar curve</b> (lower back)<span class='ar'>انحناء أسفل الضهر</span>" d="M120 184 Q96 217 120 252" stroke="#2f9686"/>
+<path data-info="<b>Sacral curve</b> (sacrum)<span class='ar'>انحناء العجز</span>" d="M120 252 Q142 280 128 306" stroke="#0f766e"/></g>
+<g font-size="13" fill="#0f766e"><text x="150" y="62">Cervical</text><text x="170" y="140">Thoracic</text><text x="30" y="222">Lumbar</text><text x="160" y="290">Sacral</text></g></svg>
+<div class="info">👆 Tap a curve</div></div>`+
+'<h3>Tips to maintain proper posture</h3>'+
+P([['🧍 Standing',`- Avoid standing in one position for long; if you can't change, <mark>elevate one foot on a stool</mark> and alternate<br>- <mark>Do not lock your knees</mark><br>- Keep <mark>stomach muscles tight</mark> to support your back<br>- Don't bend forward at waist or neck when working low<br>- No high-heeled/platform shoes for long periods`,`متقفش في وضع واحد كتير، متقفلش ركبك، شد عضلات بطنك، متنحنيش من الوسط أو الرقبة، وتجنب الكعب العالي.`],
+['🪑 Sitting & sleeping',`- Work at a <mark>comfortable height</mark>, sit close to your work<br>- <mark>Do not slump</mark><br>- Chair supports back in a <mark>slightly arched</mark> position<br>- <mark>Feet flat</mark> on floor, <mark>knees below hips</mark><br>- Sleep on a mattress <mark>firm but not extremely hard</mark>`,`اقعد معدول من غير ترهل، ضهرك مسنود بانحناء بسيط، رجليك على الأرض وركبك أقل من الوركين، ونام على مرتبة سليمة مش قاسية جدًا.`]])+
+'<h3>Why use good body mechanics?</h3>'+
+L(`To <mark>prevent deformities</mark>, <mark>improve appearance</mark>, and avoid: excessive <mark>fatigue</mark>, <mark>muscle strains or tears</mark>, <mark>skeletal injuries</mark>, injury to the <mark>patient</mark>, injury to <mark>assisting staff</mark>.`,`عشان تمنع التشوهات وتحسّن الشكل وتتجنب الإرهاق والشد والتمزق وإصابات العظام وإصابة المريض والزملاء.`)+
+'<h3>Risk factors for back injury</h3>'+
+P([['⚖️ Excess weight','','وزن زايد'],['🚬 Smoking','','التدخين'],['🏋️ Poor work postures & lifting practices','','أوضاع شغل ورفع غلط'],['🔁 Previous back trouble','','مشاكل ضهر سابقة'],['💪 Physical fitness','NOT a predictor of risk, but fit people <mark>recover more quickly</mark>','اللياقة مش بتمنع الخطر، لكن اللي لياقته كويسة بيتعافى أسرع']])]);
+
+/* 7 */
+S.push(['⚖️ 7. Laws of Gravity & Body Balance',
+L(`<mark>Center of gravity</mark> is located in the <mark>pelvic area</mark>. About <mark>half</mark> of body weight is above it and half below; and half to each side. 👇 Tap the figure.`,`مركز الجاذبية في منطقة الحوض. نص الوزن فوقه ونص تحته، ونص على كل جنب.`)+
+`<div class="sw"><svg viewBox="0 0 260 300"><circle cx="130" cy="40" r="18" fill="#e6f4f1" stroke="#0f766e" stroke-width="3"/>
+<g stroke="#0f766e" stroke-width="6" stroke-linecap="round"><line x1="130" y1="58" x2="130" y2="150"/><line x1="130" y1="75" x2="95" y2="120"/><line x1="130" y1="75" x2="165" y2="120"/><line x1="130" y1="150" x2="100" y2="262"/><line x1="130" y1="150" x2="160" y2="262"/></g>
+<line x1="130" y1="8" x2="130" y2="285" stroke="#e11d48" stroke-width="2" stroke-dasharray="6 5"/>
+<line data-info="<b>Line of gravity</b>: imaginary vertical line through the top of the head, the center of gravity and the base of support (gravity plane).<span class='ar'>خط الجاذبية: خط خيالي رأسي بيعدي من أعلى الراس لمركز الجاذبية لقاعدة الارتكاز.</span>" x1="130" y1="8" x2="130" y2="285" stroke="rgba(0,0,0,0.001)" stroke-width="22"/>
+<circle data-info="<b>Center of gravity</b>: in the pelvic area. When lifting, bend knees & hips and keep back straight so it stays over the feet.<span class='ar'>مركز الجاذبية: في الحوض. وقت الرفع اثنِ الركبة والورك وخلي ضهرك مستقيم عشان يفضل فوق القدمين.</span>" cx="130" cy="150" r="10" fill="#e11d48"/>
+<line data-info="<b>Base of support</b>: the feet. The wider the base, the more stable (within limits). Feet are spread sideways when lifting.<span class='ar'>قاعدة الارتكاز: القدمين. كل ما كانت أوسع كان أثبت، وقت الرفع افتح رجليك عرض.</span>" x1="75" y1="270" x2="185" y2="270" stroke="#0f766e" stroke-width="10" stroke-linecap="round"/>
+<g font-size="12" fill="#6b7280"><text x="140" y="20">line of gravity</text><text x="148" y="154">CoG</text><text x="190" y="274">base</text></g></svg>
+<div class="info">👆 Tap the red dot, the dashed line, or the base</div></div>`+
+'<h3>Rules that govern stability</h3>'+
+P([['Rule 1',`The <mark>broader the base of support</mark> and the <mark>lower the center of gravity</mark>, the greater the stability.`,`كل ما القاعدة أوسع ومركز الجاذبية أوطى كان أثبت.`],['Rule 2',`Balance is maintained as long as the <mark>line of gravity passes through the base of support</mark>.`,`التوازن بيفضل طالما خط الجاذبية بيعدي جوه قاعدة الارتكاز.`]])+
+'<h3>Eight general considerations for physical tasks</h3>'+
+P([['1','It is easier to <mark>pull, push, or roll</mark> an object than to lift it.','أسهل إنك تسحب أو تزق أو تدحرج من إنك ترفع.'],['2','Movements should be <mark>smooth and coordinated</mark>, not jerky.','حركتك ناعمة ومنسقة مش متقطعة.'],['3','Less force is needed to <mark>keep an object moving</mark> than to start and stop it.','تحريك شيء مستمر أسهل من البدء والإيقاف.'],['4','Use <mark>arm and leg muscles</mark> as much as possible, back muscles as little as possible.','استخدم عضلات الدراع والرجل وقلل عضلات الضهر.'],['5','Keep the work <mark>close to your body</mark>.','خلي الشيء قريب من جسمك.'],['6','<mark>Rock backward or forward</mark> on your feet to use body weight as a push/pull force.','اتمايل لقدام أو ورا عشان تستخدم وزنك في الزق والسحب.'],['7','Keep work at a <mark>comfortable height</mark> to avoid bending at the waist.','خلي الشغل على ارتفاع مريح.'],['8','Keep your body in <mark>good physical condition</mark>.','حافظ على لياقتك.']])]);
+
+/* 8 */
+S.push(['🦯 8. Mobility Assistive Devices',
+T([
+['🦯 Cane',L(`Used to compensate for <mark>impaired balance</mark> or increase stability. Standard = <mark>J cane</mark>. Functional on <mark>stairs and confined areas</mark>, easily stored and transported.`,`العكاز بيعوّض ضعف التوازن. أشهر نوع هو العصا حرف J، وينفع على السلم والأماكن الضيقة وسهل في الحمل.`)+L(`<b>Disadvantage:</b> <mark>limited support</mark> due to its small base of support.`,`العيب: دعمه محدود لأن قاعدته صغيرة.`)+'<h3>Fitting a cane (tap Next)</h3>'+ST([[`Patient <mark>stands</mark>, place the cane <mark>parallel to the lateral aspect of the tibia and femur</mark>.`,`المريض واقف، حط العكاز موازي للجانب الخارجي لعظمة الساق والفخذ.`],[`Adjust the hand piece <mark>level with the ulnar styloid process</mark>. 💡 البروز العظمي الصغير في رسغ اليد من ناحية الخنصر.`,`اظبط المقبض بمستوى النتوء الإبري للزند.`],[`This gives <mark>15 to 25 degrees of elbow flexion</mark> when the patient grasps the handle.`,`كده الكوع يبقى مثني 15–25 درجة وقت الإمساك.`]])],
+['🩼 Crutches',L(`<mark>Axillary crutches</mark> allow a <mark>greater variety of gait patterns</mark> and a <mark>faster pace</mark>.`,`العكازات الإبطية بتسمح بأنماط مشي أكتر وسرعة أعلى.`)+L(`<b>Disadvantages:</b><br>- <mark>Less stable than walker</mark><br>- Improper use can injure <mark>neurovascular structures in the axillary region</mark><br>- Require <mark>good standing balance</mark>; geriatric patients may feel insecure or lack upper-body strength`,`العيوب: أقل ثباتًا من الووكر، والاستخدام الغلط يضر الأعصاب والأوعية في الإبط، وتحتاج توازن كويس، وكبار السن ممكن يحسوا بعدم أمان أو ميكون عندهم قوة في الجزء العلوي.`)],
+['🚶 Walker',L(`Provides <mark>maximum stability and support</mark>. All have <mark>four legs</mark>; some have <mark>two or four wheels</mark> (push gently instead of picking up). Some are <mark>foldable</mark> for transport and storage.`,`الووكر أثبت جهاز، كله 4 رجلين، وبعضه عليه عجل، وبعضه بيتطوي.`)+L(`<b>Disadvantages:</b> cumbersome and hard to store/transport; <mark>very difficult on stairs</mark>; <mark>reduces speed</mark>; patient can't use a <mark>normal gait pattern</mark>.`,`العيوب: تقيل في التخزين والنقل، صعب جدًا على السلم، بيبطّئ المشي، ومبيسمحش بمشية طبيعية.`)+L(`<b>Fitting:</b> adjust height so the patient has <mark>15 to 25 degrees of elbow flexion</mark> when grasping handles.`,`الضبط: ارتفاع يخلي الكوع مثني 15–25 درجة.`)]])+
+'<h3>Quick comparison</h3>'+
+TB(['','Cane','Crutches','Walker'],[['Stability','Limited (small base)','Less than walker','<mark>Maximum</mark>'],['Stairs','Functional','Possible','Very difficult'],['Speed','—','<mark>Faster</mark>','Slower']])]);
+
+/* 9 numbers */
+S.push(['🔢 Numbers to remember',
+P([['<span class="big">206</span>','Bones in the human body','عدد العظام'],['<span class="big">40–50%</span>','Muscles as % of body weight','نسبة العضلات من وزن الجسم'],['<span class="big">20 mmHg</span>','Drop in systolic BP = orthostatic hypotension','هبوط الضغط الانقباضي'],['<span class="big">15–25°</span>','Elbow flexion for cane / walker','ثني الكوع الصح للعكاز والووكر'],['<span class="big">4</span>','Natural spine curves; components of body mechanics; legs of a walker','4 انحناءات للعمود الفقري، و4 مكونات للميكانيكا، و4 رجلين للووكر'],['<span class="big">8</span>','General considerations for physical tasks','8 اعتبارات عامة للمهام'],['<span class="big">3</span>','Muscle types: skeletal, smooth, cardiac','3 أنواع عضلات'],['<span class="big">2 or 4</span>','Possible wheels on a walker','عجلتين أو 4 للووكر'],['<span class="big">½ / ½</span>','Body weight above/below and to each side of center of gravity','نص الوزن فوق ونص تحت ونص على كل جنب']])]);
+
+/* 10 quiz */
+S.push(['📝 Quiz (10 questions)','<div id="quiz"></div><div id="sc" class="info"></div><p><button id="rs">🔄 Restart</button></p>']);
+
+var Q=[
+{q:'Mobility depends on the interaction among:',a:'الحركة بتعتمد على تفاعل:',o:['Skeleton, muscles, nervous system','Heart, lungs, kidneys','Skin, bones, blood','Muscles, liver, brain'],c:0},
+{q:'How many bones are in the human body?',a:'عدد العظام في الجسم؟',o:['106','206','306','156'],c:1},
+{q:'Muscles make up what percentage of body weight?',a:'العضلات نسبتها من وزن الجسم؟',o:['10–20%','20–30%','40–50%','60–70%'],c:2},
+{q:'Contracture is:',a:'الانكماش (Contracture) هو:',o:['Decrease in muscle size','Loss of calcium from bones','Inflammation of a vein','Permanent shortening of a muscle'],c:3},
+{q:'Orthostatic hypotension is a drop in systolic BP of:',a:'هبوط الضغط الانتصابي هو نزول الضغط الانقباضي بمقدار:',o:['5 mmHg','10 mmHg','20 mmHg','40 mmHg'],c:2},
+{q:'A blood clot that dislodged and moved until it got stuck is a:',a:'الجلطة اللي اتفكت وسافرت لحد ما اتحشرت اسمها:',o:['Thrombus','Embolism','Phlebitis','Atelectasis'],c:1},
+{q:'Hypostatic pneumonia in immobile patients is mainly due to:',a:'الالتهاب الرئوي الهبوطي سببه الأساسي:',o:['Pooling of respiratory secretions','Excess oxygen','Muscle hypertrophy','Fast walking'],c:0},
+{q:'The center of gravity is located in the:',a:'مركز الجاذبية موجود في:',o:['Head','Chest','Pelvic area','Feet'],c:2},
+{q:'Which device provides maximum stability?',a:'أنهي جهاز بيوفر أقصى ثبات؟',o:['J cane','Axillary crutches','Walker','Wooden stick'],c:2},
+{q:'Cane or walker height should give elbow flexion of:',a:'ارتفاع العكاز أو الووكر لازم يخلي ثني الكوع:',o:['0 degrees','15–25 degrees','45–60 degrees','90 degrees'],c:1}];
+var ans={};
+function score(){var n=0,r=0,k;for(k in ans){n++;if(ans[k])r++;}
+var s='Answered '+n+'/'+Q.length+' — Score: <b>'+r+'/'+Q.length+'</b>';
+if(n===Q.length)s+=(r>=9?' 🌟 Excellent!':r>=7?' 👍 Good':' 📖 Review the cards again');
+document.getElementById('sc').innerHTML=s;}
+function drawQuiz(){var h='';Q.forEach(function(q,n){h+='<div class="q"><b>'+(n+1)+'. '+q.q+'</b><div class="ar">'+q.a+'</div>';q.o.forEach(function(o,i){h+='<button class="o" data-q="'+n+'" data-i="'+i+'">'+o+'</button>';});h+='</div>';});document.getElementById('quiz').innerHTML=h;ans={};score();}
+
+var app=document.getElementById('app');
+S.forEach(function(s){app.insertAdjacentHTML('beforeend','<details class="card"><summary>'+s[0]+'</summary><div class="body">'+s[1]+'</div></details>');});
+drawQuiz();
+document.querySelectorAll('.stp').forEach(upd);
+
+document.addEventListener('click',function(e){
+var t=e.target,x;
+if(x=t.closest('.pop')){x.classList.toggle('open');return;}
+if(x=t.closest('.tb')){var w=x.closest('.tabs'),bs=x.parentNode.children,ps=w.querySelector('.tps').children,i=Array.prototype.indexOf.call(bs,x);
+for(var k=0;k<bs.length;k++){bs[k].classList.toggle('on',k===i);ps[k].classList.toggle('on',k===i);}return;}
+if(x=t.closest('.nx,.bk')){var s=x.closest('.stp'),len=s.querySelectorAll('.sp').length,j=+s.dataset.i+(x.classList.contains('nx')?1:-1);j=Math.max(0,Math.min(len-1,j));s.dataset.i=j;upd(s);return;}
+if(x=t.closest('[data-info]')){x.closest('.sw').querySelector('.info').innerHTML=x.getAttribute('data-info');return;}
+if(x=t.closest('.o')){var q=+x.dataset.q,i2=+x.dataset.i;if(ans.hasOwnProperty(q))return;
+var ok=(i2===Q[q].c);ans[q]=ok;x.classList.add(ok?'ok':'no');
+if(!ok){x.parentNode.querySelectorAll('.o')[Q[q].c].classList.add('ok');}
+score();return;}
+if(t.id==='rs'){drawQuiz();}
+});
+document.getElementById('tg').onclick=function(){document.body.classList.toggle('noar');this.textContent=document.body.classList.contains('noar')?'إظهار العربي':'إخفاء العربي';};
+</script></body></html>

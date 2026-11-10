@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vital Signs – Temperature</title>
+<style>
+:root{--p:#0f766e;--pl:#e6f4f1;--bd:#b7dfd8;--tx:#1f2937;--g:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;padding-bottom:40px}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--bd);padding:10px 14px;display:flex;gap:8px;align-items:center}
+header h1{flex:1;margin:0;font-size:1.05rem;color:var(--p)}
+button{font:inherit;cursor:pointer}
+.tb{background:var(--p);color:#fff;border:0;border-radius:20px;padding:7px 14px;font-size:.85rem}
+main{max-width:760px;margin:0 auto;padding:10px 12px}
+.card{border:1.5px solid var(--bd);border-radius:14px;margin:10px 0;overflow:hidden}
+.hd{padding:13px 14px;background:var(--pl);color:var(--p);font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hd:after{content:"▾";transition:transform .2s}
+.card.o>.hd:after{transform:rotate(180deg)}
+.hd small{display:block;font-weight:400;font-size:.8rem}
+.card>.bd{display:none;padding:10px 14px 14px}
+.card.o>.bd{display:block}
+.l{margin:9px 0}
+.ar{direction:rtl;text-align:right;font-size:.84rem;color:var(--g);line-height:1.55;font-family:Tahoma,"Segoe UI",Arial,sans-serif}
+body.hide .ar{display:none}
+mark{background:#fde047;color:#111;padding:0 3px;border-radius:3px}
+.g{background:#f3f4f6;border-radius:8px;padding:6px 10px;margin:8px 0}
+h4{margin:16px 0 4px;color:var(--p);font-size:.95rem}
+.fc{border:1.5px dashed var(--p);border-radius:10px;padding:9px 11px;margin:6px 0;cursor:pointer}
+.fc>b{color:var(--p)}
+.fc>b:after{content:" ＋"}
+.fc.o>b:after{content:" −"}
+.fc .x{display:none;margin-top:6px}
+.fc.o{background:var(--pl);border-style:solid}
+.fc.o .x{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{border:1px solid var(--bd);padding:5px 7px;vertical-align:top}
+th{background:var(--pl);color:var(--p)}
+td .l{margin:5px 0}
+.sp{display:none}
+.sp.on{display:block}
+.st{border:1.5px solid var(--bd);border-radius:12px;padding:10px 12px;margin:8px 0}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.nav button{background:var(--p);color:#fff;border:0;border-radius:8px;padding:7px 16px}
+.big{font-size:1.6rem;text-align:center}
+.fm{background:var(--pl);border-radius:10px;padding:8px 12px;text-align:center;margin:8px 0;font-weight:600}
+.cv{display:flex;gap:6px;align-items:center;justify-content:center;margin:8px 0}
+.cv input{width:90px;padding:6px;border:1.5px solid var(--bd);border-radius:8px;font:inherit}
+.sv svg{width:100%;height:auto;display:block}
+.info{background:var(--pl);border-radius:10px;padding:8px 12px;margin-top:6px;min-height:52px}
+.z rect,.z circle,.y circle{fill:var(--pl);stroke:var(--p);stroke-width:1.5;cursor:pointer}
+.z text,.y text{font-size:13px;fill:var(--p);font-weight:600;cursor:pointer}
+.z.s rect,.y.s circle{fill:var(--p)}
+.z.s text{fill:#fff}
+.z2 rect{stroke:#fff;stroke-width:2;cursor:pointer}
+.z2.s rect{stroke:var(--p);stroke-width:3}
+.z2 text{font-size:9px;fill:#1f2937;pointer-events:none}
+.ng{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.nc{border:1.5px solid var(--bd);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.nc b{display:block;font-size:1.1rem;color:var(--p)}
+.nc .x{display:none;margin-top:6px;font-size:.82rem;text-align:left}
+.nc.o{background:var(--pl)}
+.nc.o .x{display:block}
+.q{border-bottom:1px solid var(--bd);padding:10px 0}
+.op{display:block;width:100%;text-align:left;border:1.5px solid var(--bd);background:#fff;border-radius:10px;padding:9px 11px;margin:5px 0}
+.op.ok{background:#d1fae5;border-color:#10b981}
+.op.no{background:#fee2e2;border-color:#ef4444}
+.res{font-weight:700;color:var(--p);margin:12px 0}
+</style>
+</head>
+<body>
+<header><h1>🌡️ Vital Signs – Temperature</h1><button class="tb" id="tg">عربي: ON</button></header>
+<main id="app"></main>
+<script>
+const L=(e,a)=>`<div class="l"><div>${e}</div><div class="ar">${a}</div></div>`;
+const LS=arr=>arr.map(x=>L(x[0],x[1])).join("");
+const G=t=>`<div class="ar g">💡 ${t}</div>`;
+const F=(t,b)=>`<div class="fc" data-t><b>${t}</b><div class="x">${b}</div></div>`;
+const AR=t=>`<div class="ar">${t}</div>`;
+const ST=arr=>`<div class="st">${arr.map((s,i)=>`<div class="sp${i?"":" on"}">${s}</div>`).join("")}<div class="nav"><button data-s="-1">◀ Back</button><span class="sc2">1/${arr.length}</span><button data-s="1">Next ▶</button></div></div>`;
+const SV=(svg,id)=>`<div class="sv" data-d="${id}">${svg}<div class="info">👆 Tap any part · اضغط على أي جزء</div></div>`;
+
+const D={
+rad:L("<b>Radiation</b> (rays): transfer of heat from the surface of one object to another <mark>without contact</mark> between the two objects.","الإشعاع: انتقال الحرارة من سطح جسم لجسم تاني من غير ما يلمسوا بعض."),
+cond:L("<b>Conduction</b> (contact): transfer of heat from one molecule to a molecule of <mark>lower temperature</mark> by <mark>contact</mark> between materials, e.g. when the body is put in cold water.","التوصيل: انتقال الحرارة بالتلامس لجزيء حرارته أقل، زي لما الجسم يتحط في مية ساقعة."),
+conv:L("<b>Convection</b> (air current): dispersion of heat by <mark>air currents</mark> passing over a warm object, carrying its heat away with them.","الحمل: توزيع الحرارة بتيار هوا بيعدّي على جسم دافي ويشيل حرارته معاه."),
+vap:L("<b>Vaporization</b> (evaporation): the process by which a substance in the <mark>liquid</mark> state changes to a <mark>vapor</mark> state.","التبخر: تحول مادة من سائل لبخار."),
+oral:L("<b>Oral</b> – within the mouth or <mark>under the tongue</mark>.","من الفم أو تحت اللسان.")+L("Not for: infants/children, unconscious, very old, seizures, persistent cough, mouth surgery/inflammation…","ممنوع في: الرضّع والأطفال، فاقد الوعي، كبار السن، التشنجات، الكحة…"),
+axi:L("<b>Axillary</b> – in the <mark>armpit</mark>.","من الإبط.")+L("Not for: skin disease, axillary operation.","ممنوع في: مرض جلدي، عملية في الإبط."),
+tym:L("<b>Tympanic</b> – in the <mark>ear canal</mark>.","من قناة الودن.")+L("Uses a tympanic (ear) thermometer.","بيستخدم ترمومتر الودن."),
+rec:L("<b>Rectal</b> – through the <mark>anus, in the rectum</mark>.","من الشرج جوه المستقيم.")+L("Not for: rectal surgery, rectal inflammation, diarrhea.","ممنوع في: عملية في المستقيم، التهاب المستقيم، الإسهال."),
+hypo:L("<b>Hypothermia</b>: a drop in body temperature <mark>below normal</mark> value.","انخفاض حرارة الجسم عن الطبيعي."),
+norm:L("<b>Normal</b>: <mark>36.5–37.2°C</mark> (98.6°F = 37°C is the normal adult temperature).","الطبيعي: 36.5 إلى 37.2 مئوية."),
+low:L("<b>Low-grade fever</b>: slightly elevated, approx. <mark>37.3°C to 38.2°C</mark>.","حمى خفيفة: ارتفاع بسيط من 37.3 لـ 38.2."),
+high:L("<b>High-grade fever</b>: temperature above <mark>38.3°C to 40.5°C</mark>.","حمى عالية: من 38.3 لـ 40.5."),
+hyper:L("<b>Hyperpyrexia</b>: body temperature above <mark>41.6°C</mark>.","فرط الحمى: فوق 41.6 مئوية.")
+};
+
+const heatSvg=`<svg viewBox="0 0 320 210"><g stroke="#0f766e" stroke-width="2"><line x1="110" y1="45" x2="145" y2="85"/><line x1="110" y1="165" x2="145" y2="130"/><line x1="210" y1="45" x2="175" y2="85"/><line x1="210" y1="165" x2="175" y2="130"/></g><circle cx="160" cy="80" r="16" fill="#fcd9b6" stroke="#0f766e" stroke-width="2"/><rect x="142" y="98" width="36" height="55" rx="12" fill="#fcd9b6" stroke="#0f766e" stroke-width="2"/><g class="z" data-i="rad"><rect x="10" y="15" width="115" height="42" rx="10"/><text x="67" y="41" text-anchor="middle">🔆 Radiation</text></g><g class="z" data-i="conv"><rect x="195" y="15" width="115" height="42" rx="10"/><text x="252" y="41" text-anchor="middle">💨 Convection</text></g><g class="z" data-i="cond"><rect x="10" y="153" width="115" height="42" rx="10"/><text x="67" y="179" text-anchor="middle">🤝 Conduction</text></g><g class="z" data-i="vap"><rect x="195" y="153" width="115" height="42" rx="10"/><text x="252" y="179" text-anchor="middle">💧 Vaporization</text></g></svg>`;
+
+const siteSvg=`<svg viewBox="0 0 320 230"><circle cx="160" cy="45" r="30" fill="#fcd9b6" stroke="#0f766e" stroke-width="2"/><rect x="125" y="80" width="70" height="105" rx="14" fill="#fcd9b6" stroke="#0f766e" stroke-width="2"/><g class="y" data-i="tym"><circle cx="130" cy="48" r="8"/><text x="12" y="52">👂 Tympanic</text></g><g class="y" data-i="oral"><circle cx="160" cy="60" r="8"/><text x="205" y="64">👄 Oral</text></g><g class="y" data-i="axi"><circle cx="126" cy="105" r="8"/><text x="12" y="109">💪 Axillary</text></g><g class="y" data-i="rec"><circle cx="160" cy="178" r="8"/><text x="205" y="182">🍑 Rectal</text></g></svg>`;
+
+const scl=[["hypo","Hypothermia","below normal","#bfdbfe"],["norm","Normal","36.5–37.2","#bbf7d0"],["low","Low-grade","37.3–38.2","#fef08a"],["high","High-grade","38.3–40.5","#fdba74"],["hyper","Hyperpyrexia","> 41.6","#fca5a5"]];
+const scaleSvg=`<svg viewBox="0 0 330 90">${scl.map((s,i)=>`<g class="z2" data-i="${s[0]}"><rect x="${i*66}" y="15" width="66" height="50" fill="${s[3]}"/><text x="${i*66+33}" y="37" text-anchor="middle">${s[1]}</text><text x="${i*66+33}" y="52" text-anchor="middle">${s[2]}</text></g>`).join("")}<text x="165" y="84" text-anchor="middle" font-size="9" fill="#6b7280">°C</text></svg>`;
+
+const conv=`<div class="cv"><input id="tc" type="number" step="any" placeholder="°C" oninput="cv('c')"> °C ⇄ <input id="tf" type="number" step="any" placeholder="°F" oninput="cv('f')"> °F</div>`;
+function cv(w){const c=document.getElementById("tc"),f=document.getElementById("tf");if(w==="c"){f.value=c.value===""?"":(c.value*9/5+32).toFixed(1)}else{c.value=f.value===""?"":((f.value-32)*5/9).toFixed(1)}}
+
+const NUM=[
+["98.6°F = 37°C","Normal adult temperature","درجة الحرارة الطبيعية للكبار"],
+["36.5–37.2°C","Normal range (Temperature Ranges slide)","المدى الطبيعي"],
+["36.5–37.5°C (97.7–99.5°F)","Normal range in the Fever slide; fever is above it","المدى الطبيعي في شريحة الحمى؛ الحمى فوقه"],
+["37.3–38.2°C","Low-grade fever","حمى خفيفة"],
+["38.3–40.5°C","High-grade fever","حمى عالية"],
+["> 41.6°C","Hyperpyrexia","فرط الحمى"],
+["85%","Share of body heat lost through the skin","نسبة الحرارة المفقودة من الجلد"],
+["4","Vital signs: temperature, pulse, respiration, blood pressure","العلامات الحيوية الأربعة"],
+["4","Heat loss ways: radiation, conduction, convection, vaporization","طرق فقد الحرارة"],
+["4","Temperature sites: oral, axillary, tympanic, rectal","أماكن قياس الحرارة"],
+["3","Steps of thermoregulation","خطوات تنظيم الحرارة"],
+["(°F − 32) × 5/9","Fahrenheit → Celsius","من فهرنهايت لسيلزيوس"],
+["(°C × 9/5) + 32","Celsius → Fahrenheit","من سيلزيوس لفهرنهايت"],
+["9 / 2 / 3","Contraindications: oral / axillary / rectal","عدد موانع القياس: فم / إبط / شرج"],
+["6","Times to assess vital signs","مواقف قياس العلامات الحيوية"]
+];
+
+const Q=[
+["Normal adult body temperature is:","درجة حرارة الجسم الطبيعية للكبار:",["35°C (95°F)","37°C (98.6°F)","39°C (102.2°F)","40.5°C (104.9°F)"],1],
+["Which structure controls thermoregulation?","إيه الجزء اللي بيتحكم في تنظيم الحرارة؟",["Thyroid gland","Hypothalamus","Skin","Lungs"],1],
+["About what percentage of body heat is lost through the skin?","نسبة الحرارة اللي بتتفقد من الجلد تقريبًا؟",["25%","50%","70%","85%"],3],
+["Transfer of heat with no contact between two objects is:","نقل الحرارة من غير تلامس بين جسمين:",["Conduction","Convection","Radiation","Vaporization"],2],
+["Low-grade fever range is approximately:","مدى الحمى الخفيفة تقريبًا:",["36.5–37.2°C","37.3–38.2°C","38.3–40.5°C","Above 41.6°C"],1],
+["Body temperature above 41.6°C is called:","حرارة الجسم فوق 41.6 اسمها:",["Hypothermia","Low-grade fever","Hyperpyrexia","Defervescence"],2],
+["Cold skin and shivering at fever onset are due to:","برودة الجلد والرعشة في بداية الحمى بسبب:",["Vasodilatation","Vasoconstriction","Sweating","Radiation"],1],
+["Oral temperature is contraindicated in:","قياس الحرارة من الفم ممنوع في:",["A calm conscious adult","An unconscious patient","A patient with normal breathing","A patient who just woke up"],1],
+["Rectal temperature is contraindicated in:","قياس الحرارة من الشرج ممنوع في:",["Diarrhea","Headache","Sleepiness","Thirst"],0],
+["A tepid sponge bath increases heat loss through:","الإسفنجة الفاترة بتزود فقد الحرارة عن طريق:",["Radiation","Convection","Conduction","Vaporization"],2]
+];
+
+const C=[
+["🎯","Objectives","أهداف المحاضرة",
+LS([
+["<mark>Recognize</mark> normal and abnormal values of temperature, pulse, respirations, and blood pressure for adults.","تعرّف على القيم الطبيعية وغير الطبيعية للحرارة والنبض والتنفس وضغط الدم للكبار."],
+["<mark>Compare</mark> the methods and contraindications of measuring oral, tympanic, axillary, and rectal temperatures.","قارن بين طرق وموانع قياس الحرارة من الفم والودن والإبط والشرج."],
+["<mark>Identify</mark> the sites for assessing the pulse and blood pressure.","حدد أماكن قياس النبض وضغط الدم."],
+["<mark>Demonstrate</mark> measuring temperature, pulse, respirations, and blood pressure.","اعرض عمليًا قياس الحرارة والنبض والتنفس والضغط."]
+])+G("Contraindication = مانع استخدام: حالة ماينفعش معاها تعمل الحاجة دي")],
+
+["❤️","Vital Signs (Cardinal Signs)","العلامات الحيوية (الأساسية)",
+LS([
+["Vital signs are fundamental to assessment to establish <mark>baseline values</mark> of the client’s <mark>cardiorespiratory integrity</mark>.","العلامات الحيوية أساس التقييم عشان نحدد القيم المرجعية لسلامة القلب والتنفس عند المريض."],
+["Vital signs reflect the body’s physiologic status and give information critical to evaluating <mark>homeostatic balance</mark>.","بتعكس حالة وظائف الجسم وبتساعد نقيّم اتزان الجسم الداخلي."],
+["The term “vital” is used because the information is the <mark>clearest indicator of overall health status</mark>.","اسمها «حيوية» لأنها أوضح مؤشر على الصحة العامة."],
+["Normal vital signs change with <mark>age, sex, weight, exercise tolerance, and health condition</mark>.","القيم الطبيعية بتتغير حسب السن والنوع والوزن وتحمّل المجهود والحالة الصحية."]
+])+G("Baseline = قيمة مرجعية تقارن بيها · Cardiorespiratory = القلب والرئتين · Homeostasis = ثبات الجسم الداخلي · Cardinal = أساسية")
++"<h4>The 4 vital signs (tap)</h4><div class=\"grid\">"+F("🌡️ Temperature",AR("درجة الحرارة"))+F("💓 Pulse",AR("النبض"))+F("🫁 Respiration",AR("التنفس"))+F("🩸 Blood Pressure",AR("ضغط الدم"))+"</div>"
++"<h4>⏰ Times to assess vital signs</h4>"+LS([
+["<mark>On admission</mark>.","عند دخول المريض."],
+["When a client has a <mark>change in health status</mark>.","لما حالة المريض تتغير."],
+["Before and after <mark>surgery or an invasive procedure</mark>.","قبل وبعد العملية أو أي إجراء تدخلي."],
+["Before and/or after the administration of a <mark>medication</mark>.","قبل و/أو بعد إعطاء دوا."],
+["Before and after any <mark>nursing intervention</mark>.","قبل وبعد أي تدخل تمريضي."],
+["Measure <mark>more often</mark> if the client’s health status requires it.","قِس أكتر من مرة لو حالة المريض محتاجة."]
+])],
+
+["🌡️","Temperature: Basics","الحرارة: الأساسيات",
+LS([
+["Humans are <mark>warm-blooded</mark>: they maintain a consistent internal body temperature independent of the outside environment.","الإنسان دمه حامي: بيحافظ على حرارة داخلية ثابتة مهما كان الجو برّه."],
+["The <mark>core temperature</mark> remains relatively constant unless the client develops a <mark>febrile illness</mark>.","حرارة الجسم الداخلية بتفضل ثابتة تقريبًا إلا لو حصلت حمى."]
+])+G("Febrile = فيه حمى · Warm-blooded = حرارة جسمه ثابتة")
++"<h4>Body temperature (tap)</h4>"
++F("Core temperature",`Temperature of the <mark>deep tissue</mark> of the body (e.g. <mark>abdominal cavity and pelvic cavity</mark>). It remains relatively constant.${AR("حرارة الأنسجة العميقة (تجويف البطن والحوض). ثابتة نسبيًا.")}`)
++F("Surface temperature",`Temperature of the <mark>skin, subcutaneous tissue and fat</mark>.${AR("حرارة الجلد والأنسجة تحت الجلد والدهون.")}`)
++`<div class="big">🔥 Heat produced ⚖️ Heat lost 💨</div>`
++L("Body temperature is the <mark>balance between the heat produced</mark> by the body and <mark>the heat lost</mark> from the body.","حرارة الجسم هي التوازن بين الحرارة اللي الجسم بينتجها والحرارة اللي بتتفقد.")
++L("<mark>Thermoregulation</mark> is the process that allows the human body to maintain its <mark>core internal temperature</mark>.","تنظيم الحرارة: العملية اللي بتخلّي الجسم يحافظ على حرارته الداخلية.")
++L("The heat of the body is measured in units called <mark>degrees</mark>.","حرارة الجسم بتتقاس بوحدة اسمها درجات.")
++"<h4>Temperature scales</h4>"
++L("Temperature can be measured on the <mark>Celsius</mark> or <mark>Fahrenheit</mark> scale.","الحرارة بتتقاس بمقياس سيلزيوس أو فهرنهايت.")
++`<div class="fm"><mark>Celsius = (Fahrenheit − 32) × 5/9</mark><br><mark>Fahrenheit = (Celsius × 9/5) + 32</mark></div>`+conv],
+
+["🧠","How Thermoregulation Works","إزاي الجسم بينظم الحرارة",
+L("When the temperature <mark>increases</mark>, the body activates a system to promote <mark>heat loss</mark>. This returns body temperature back to normal.","لما الحرارة تزيد، الجسم بيشغّل نظام يزوّد فقد الحرارة ويرجّعها للطبيعي.")
++L("This process has <mark>three steps</mark> (use Next / Back):","العملية دي ليها 3 خطوات (استخدم Next / Back):")
++ST([
+`<div class="big">🌡️⬆️ ➜ 🧠</div>`+L("<b>1)</b> Sensors in your <mark>central nervous system (CNS)</mark> send messages to your <mark>hypothalamus</mark>, telling it your internal temperature is increasing.","مستشعرات في الجهاز العصبي المركزي بتبعت رسالة للهيبوثالاموس إن الحرارة الداخلية بتزيد."),
+`<div class="big">🧠📩</div>`+L("<b>2)</b> Your <mark>hypothalamus</mark>, which controls thermoregulation, receives the message.","الهيبوثالاموس (اللي بيتحكم في تنظيم الحرارة) بيستقبل الرسالة."),
+`<div class="big">🧠 ➜ 🌡️⬇️</div>`+L("<b>3)</b> Your hypothalamus activates <mark>one of several mechanisms</mark> to decrease your temperature.","الهيبوثالاموس بيشغّل واحدة من عدة آليات عشان تنزّل الحرارة.")
+])
++L("The <mark>same process</mark> occurs when your body senses your temperature is <mark>falling too low</mark>.","نفس العملية بتحصل لما الجسم يحس إن الحرارة بتنزل أوي.")
++G("CNS = المخ والحبل الشوكي · Hypothalamus = جزء في المخ هو مركز التحكم في الحرارة")
++"<h4>❄️ If the body needs to COOL DOWN (tap)</h4>"
++F("Sweating",`One of the first methods the body uses to control temperature. Sweat cools the skin as it <mark>evaporates</mark>.${AR("العرق من أول الوسائل؛ بيبرّد الجلد لما يتبخر.")}`)
++F("Vasodilatation",`The CNS instructs the capillaries under the skin to <mark>dilate (open)</mark>. Enlarged capillaries <mark>increase blood flow</mark> at the skin surface, so the body releases heat through <mark>radiation</mark>.${AR("الشعيرات الدموية تحت الجلد بتتوسع، الدم في الجلد يزيد، والجسم يطلّع حرارة بالإشعاع.")}`)
++"<h4>🔥 If the body needs to WARM UP (tap)</h4>"
++F("Stopping sweating",`The nervous system lowers sweat production to help maintain the heat the body generates.${AR("الجهاز العصبي بيقلل العرق عشان الجسم يحتفظ بالحرارة.")}`)
++F("Vasoconstriction",`The CNS signals capillaries to <mark>constrict (narrower)</mark>. This <mark>decreases blood flow</mark> under the skin and <mark>reduces heat loss</mark>.${AR("الشعيرات بتضيق، الدم تحت الجلد يقل، والحرارة المفقودة تقل.")}`)
++F("Thermogenesis",`Muscles, organs and brain produce heat when the internal temperature is sinking. <mark>Muscles</mark> are especially effective (large quantities of heat quickly). <mark>Shivering</mark> is one way.${AR("العضلات والأعضاء والمخ بتنتج حرارة لما الحرارة تنزل. العضلات الأقوى، والرعشة إحدى الطرق.")}`)
++F("Hormonal thermogenesis",`The body activates the <mark>thyroid gland</mark> if you are getting too cold. This releases hormones that increase your <mark>metabolism</mark>.${AR("الجسم بينشّط الغدة الدرقية فتفرز هرمونات بتزود الحرق (التمثيل الغذائي).")}`)
++G("Dilate = تتوسع · Constrict = تضيق · Capillaries = شعيرات دموية · Metabolism = حرق الجسم للطاقة · Thyroid = الغدة الدرقية")],
+
+["🔥","Process of Heat Loss","فقد الحرارة",
+L("Body heat is lost through the <mark>skin, lungs, and digestive and urinary tract</mark>. The loss through the skin accounts for about <mark>85%</mark> of the total.","الحرارة بتتفقد من الجلد والرئتين والجهاز الهضمي والبولي. الجلد لوحده حوالي 85%.")
++L("Heat is lost from the body through 4 ways – <mark>tap the figure</mark>:","الحرارة بتتفقد بـ 4 طرق – اضغط على الرسمة:")
++SV(heatSvg,"heat")
++"<table><tr><th>Radiation</th><th>Conduction</th><th>Convection</th><th>Vaporization</th></tr><tr><td>rays<div class=\"ar\">أشعة</div></td><td>contact<div class=\"ar\">تلامس</div></td><td>air current<div class=\"ar\">تيار هوا</div></td><td>evaporation<div class=\"ar\">تبخر</div></td></tr></table>"
++G("Vaporization = تحويل سائل لبخار")],
+
+["⚖️","Factors Affecting Heat Production","عوامل تؤثر على إنتاج الحرارة",
+"<table><tr><th>🔺 Increasing</th><th>🔻 Decreasing</th></tr><tr><td>"+LS([
+["Muscular activity","نشاط العضلات"],["Ingestion of food","الأكل"],["Time of day","وقت اليوم"],["Emotion","الانفعال"],["Hormones","الهرمونات"],["Infection","العدوى"],["Increase temperature of the environment","ارتفاع حرارة البيئة"],["Menstruation and pregnancy","الدورة الشهرية والحمل"]
+])+"</td><td>"+LS([
+["Prolonged illness: muscular activity is diminished and less heat is produced","مرض طويل: حركة العضلات تقل فالحرارة تقل"],["Fasting","الصيام"],["Sleep","النوم"],["Depression of the nervous system","هبوط الجهاز العصبي"],["Time of day: temperature tends to be <mark>lowest in the morning</mark>","وقت اليوم: الأقل غالبًا الصبح"],["Age","السن"]
+])+"</td></tr></table>"],
+
+["📏","Temperature Ranges & Sites","المعدلات وأماكن القياس",
+LS([
+["Normal adult temperature is <mark>98.6°F, or 37°C</mark>.","الحرارة الطبيعية للكبار 98.6 فهرنهايت أو 37 مئوية."],
+["Normal range can be from <mark>36.5°C to 37.2°C</mark>.","المدى الطبيعي من 36.5 لـ 37.2 مئوية."],
+["Temperatures can vary due to: <mark>time of day, allergic reaction, illness, stress, exposure to heat or cold</mark>.","الحرارة بتتغير بسبب: وقت اليوم، حساسية، مرض، توتر، التعرض للحر أو البرد."]
+])+"<h4>Temperature sites – tap a dot</h4>"+SV(siteSvg,"site")],
+
+["🚫","Contraindications of Measuring Sites","موانع قياس الحرارة",
+"<table><tr><th>Oral</th><td>"+LS([
+["Infants and children","الرضّع والأطفال"],["Unconscious patient","مريض فاقد الوعي"],["Inflammation or surgery of mouth","التهاب أو عملية في الفم"],["Mouth breathing patients","مريض بيتنفس من الفم"],["Very old","كبار السن جدًا"],["Very weak, cannot close his mouth well","ضعيف جدًا ومش قادر يقفل بقه"],["Patient with seizure disorder","مريض تشنجات"],["Persistent frequent cough","كحة مستمرة ومتكررة"],["After drinking hot or cold fluids","بعد شرب سوائل سخنة أو ساقعة"]
+])+"</td></tr><tr><th>Axillary</th><td>"+LS([["Skin disease","مرض جلدي"],["Axillary operation","عملية في الإبط"]])+"</td></tr><tr><th>Rectal</th><td>"+LS([["Patient with a surgery in rectum","مريض عنده عملية في المستقيم"],["Inflammation of rectum","التهاب المستقيم"],["Diarrhea","إسهال"]])+"</td></tr></table>"],
+
+["🧪","Types of Thermometers","أنواع الترمومترات",
+"<p class=\"ar\" style=\"margin:0\">اضغط على كل نوع</p>"
++F("🧪 Glass thermometers",`Glass tube with a °C / °F scale.${AR("ترمومتر زجاج عليه تدريج مئوي وفهرنهايت.")}`)
++F("🔢 Digital thermometers",`Show the reading on a digital screen (e.g. 98.6).${AR("بيعرض القراءة على شاشة رقمية.")}`)
++F("👂 Tympanic thermometers",`Placed in the ear (ear canal); shows the reading on a screen.${AR("بيتحط في الودن وبيعرض القراءة.")}`)
++F("🌈 Sensitive strip thermometers",`A strip placed on the forehead; the strip shows the temperature (e.g. 37, 38 / 98.6, 100.4).${AR("شريط بيتحط على الجبهة وبيوضح الحرارة.")}`)
++F("🍼 Pacifier thermometers",`A pacifier with a digital screen, used for babies.${AR("لهاية فيها شاشة رقمية للأطفال الرضّع.")}`)],
+
+["🤒","Alteration: Fever (Pyrexia)","ارتفاع الحرارة (الحمى)",
+LS([
+["<mark>Pyrexia</mark> is a common symptom of illness. A body temperature above the usual range is called <mark>pyrexia, hyperthermia or fever</mark>.","الحمى عرض شائع للمرض. حرارة الجسم فوق المعتاد اسمها pyrexia أو hyperthermia أو fever."],
+["A fever is an elevation of body temperature above the normal range of <mark>36.5–37.5°C (97.7–99.5°F)</mark>.","الحمى ارتفاع حرارة الجسم فوق المدى الطبيعي 36.5–37.5 مئوية (97.7–99.5 فهرنهايت)."]
+])+"<h4>Fever grades – tap a segment</h4>"+SV(scaleSvg,"scale")
++G("Pyrexia = حمى · Hyperthermia = ارتفاع الحرارة · Hyperpyrexia = حمى شديدة جدًا")
++AR("⚠️ المحاضرة ماذكرتش درجات بين 40.5 و41.6 (مكتوبة زي ما هي).")],
+
+["🦠","Causes & Signs of Fever","أسباب الحمى وأعراضها",
+L("Fever is the result of an <mark>immune response</mark> by the body to a foreign invader: <mark>viruses, bacteria, fungi, drugs, or other toxins</mark>.","الحمى نتيجة رد فعل مناعي ضد غازي: فيروسات، بكتيريا، فطريات، أدوية، أو سموم.")
++"<h4>Other causes</h4>"+LS([
+["Damage to the <mark>heat regulating center</mark> due to head injury","تلف مركز تنظيم الحرارة بسبب إصابة في الراس"],
+["Acute infectious disease e.g. <mark>malaria</mark>","مرض معدي حاد زي الملاريا"],
+["Acute inflammatory conditions","حالات التهابية حادة"],
+["Acute and prolonged pain","ألم حاد ومستمر"],
+["Extreme nervousness","عصبية شديدة"],
+["Emotional stress","ضغط نفسي"],
+["Trauma or injury to body tissue","إصابة أو رضّ للأنسجة"],
+["Conditions that <mark>increase heat production</mark> e.g. <mark>thyrotoxicosis</mark>: increased metabolic rate elevates body temperature","حالات بتزود إنتاج الحرارة زي التسمم الدرقي: الحرق بيزيد فالحرارة ترتفع"],
+["Conditions that <mark>decrease heat loss</mark> e.g. <mark>dehydration</mark>: decreased secretion of sweat","حالات بتقلل فقد الحرارة زي الجفاف: العرق يقل"]
+])+G("Thyrotoxicosis = زيادة هرمون الغدة الدرقية · Dehydration = جفاف")
++"<h4>Signs and symptoms (Next / Back)</h4>"
++ST([
+`<div class="big">🥶</div>`+L("<b>Onset (Cold or chill stage):</b> <mark>chills</mark>, feeling of coldness, <mark>cold skin</mark> (due to <mark>vasoconstriction</mark>), <mark>shivering</mark>.","مرحلة البداية (البرد/القشعريرة): قشعريرة، إحساس ببرد، جلد بارد (بسبب انقباض الأوعية)، رعشة."),
+`<div class="big">🥵💦</div>`+L("<b>Course – Defervescence (fever abatement):</b> <mark>excessive sweating</mark> and a hot, <mark>flushed skin</mark> due to sudden <mark>vasodilation</mark>.","مرحلة نزول الحمى: عرق كتير وجلد سخن ومحمّر بسبب توسع الأوعية فجأة."),
+`<div class="big">🙂🌡️</div>`+L("<b>Decline period:</b> a period when the temperature <mark>falls to normal</mark>.","فترة الانحدار: الحرارة بترجع للطبيعي.")
+])+G("Defervescence = نزول الحمى · Flushed = محمرّ")],
+
+["🩺","Nursing Interventions for Fever","التدخلات التمريضية للحمى",
+LS([
+["<mark>Monitor vital signs</mark>.","راقب العلامات الحيوية."],
+["Assess <mark>skin color and temperature</mark>.","قيّم لون الجلد وحرارته."],
+["Monitor <mark>white blood cell count, hematocrit value</mark>, and other pertinent laboratory records.","راقب عدد كرات الدم البيضا والهيماتوكريت ونتايج التحاليل المهمة."],
+["<mark>Remove excess blankets</mark> when the client feels warm, but provide <mark>extra warmth</mark> when the client feels chilled.","شيل البطاطين الزيادة لو المريض سخن، وادّيه دفا زيادة لو حاسس ببرد."],
+["Provide <mark>adequate food and fluids</mark> to meet the increased metabolic demands and prevent dehydration, if health permits. Clients who sweat profusely can become dehydrated.","وفّر أكل وسوائل كفاية للاحتياج الزايد وتمنع الجفاف لو الحالة تسمح؛ اللي بيعرق كتير ممكن يتجفف."],
+["Measure <mark>intake and output</mark>.","قِس السوائل الداخلة والخارجة."],
+["Maintain prescribed <mark>intravenous fluids</mark>.","استمر في المحاليل الوريدية المكتوبة."],
+["<mark>Reduce physical activity</mark> to limit heat production, especially in the flush stage.","قلّل النشاط البدني عشان الحرارة المنتجة تقل، خصوصًا في مرحلة الاحمرار."],
+["Administer <mark>antipyretics</mark> as ordered.","اعطِ خافضات الحرارة حسب الأمر."],
+["Provide <mark>oral hygiene</mark> to keep the mucous membranes moist. They can become dry and cracked because of excessive fluid loss.","اعتنِ بنظافة الفم عشان الأغشية المخاطية تفضل رطبة؛ ممكن تنشف وتتشقق من فقد السوائل."],
+["Provide a <mark>tepid sponge bath</mark> to increase heat loss through <mark>conduction</mark>.","استحمام بإسفنجة فاترة يزوّد فقد الحرارة بالتوصيل."],
+["Provide <mark>dry clothing and bed linens</mark> to increase heat loss through conduction.","هدوم وملايات نضيفة وناشفة تزوّد فقد الحرارة بالتوصيل."]
+])+G("Antipyretics = خافضات الحرارة · Tepid = فاتر · Mucous membranes = الأغشية المخاطية · Hematocrit = نسبة كرات الدم الحمرا")],
+
+["❄️","Hypothermia","انخفاض حرارة الجسم",
+L("<mark>Hypothermia</mark> is defined as a <mark>drop in body temperature below normal</mark> value.","انخفاض الحرارة هو نزول حرارة الجسم عن القيمة الطبيعية.")
++"<h4>Causes</h4>"+LS([
+["<mark>Lowered metabolism</mark>","نقص الحرق"],["<mark>Decreased activity</mark> – usually occurs in the elderly","قلة النشاط – بتحصل غالبًا في كبار السن"],["<mark>Heavy sedation</mark>","مهدّئات قوية"],["<mark>Circulatory failure</mark>","فشل الدورة الدموية"],["Exposure to <mark>extremely cold</mark> environmental temperature","التعرض لجو بارد جدًا"]
+])
++F("Signs and symptoms (tap)",LS([
+["Pale skin · Cold hands and feet · Cyanosed lips · Chilling · Drowsiness","جلد شاحب · إيدين ورجلين باردة · شفايف زرقا · قشعريرة · نعاس"],
+["Decreased mental and physical capabilities · Patient feels sleepy · <mark>Slow pulse rate</mark>","قدرات عقلية وجسدية أقل · المريض عايز ينام · نبض بطيء"]
+])+G("Cyanosed = زرقان من نقص الأكسجين"))
++F("Nursing care (tap)",LS([
+["<mark>Increase physical activities</mark>.","زوّد النشاط البدني."],
+["<mark>Warm the patient</mark> by: more blankets, extra clothes, heaters, hot applications to the skin (hot water bottles, heating pads), friction of the body surface, and warm food and drinks.","دفّي المريض بـ: بطاطين وهدوم زيادة، سخانات، كمادات سخنة (زجاجات مية سخنة ووسايد تدفئة)، تدليك سطح الجسم، وأكل وشرب سخن."]
+]))],
+
+["🔢","Numbers to Remember","أرقام لازم تحفظها",
+"<p class=\"ar\" style=\"margin:0 0 8px\">اضغط على أي كارت يظهر معناه</p><div class=\"ng\">"+NUM.map(n=>`<div class="nc" data-t><b>${n[0]}</b><div class="x">${n[1]}${AR(n[2])}</div></div>`).join("")+"</div>"],
+
+["📝","Quiz (10 questions)","كويز (10 أسئلة)",
+Q.map((q,i)=>`<div class="q" data-q="${i}"><b>${i+1}. ${q[0]}</b>${AR(q[1])}${q[2].map((o,j)=>`<button class="op" data-o="${j}">${o}</button>`).join("")}</div>`).join("")+`<div id="res" class="res"></div><button class="tb" data-r="1">↺ Restart</button>`]
+];
+
+document.getElementById("app").innerHTML=C.map(c=>`<section class="card"><div class="hd" data-t><span>${c[0]} ${c[1]}<small class="ar">${c[2]}</small></span></div><div class="bd">${c[3]}</div></section>`).join("");
+
+let sc=0,dn=0;
+function showRes(){
+  const r=document.getElementById("res");
+  if(dn<10){r.textContent="Score: "+sc+" / "+dn;return}
+  const p=Math.round(sc*10);
+  r.innerHTML="Final score: "+sc+" / 10 ("+p+"%) "+(sc>=8?"🌟 Excellent!":sc>=5?"👍 Good, review the mistakes":"📚 Review the lecture again")+AR("النتيجة النهائية: "+sc+" من 10");
+}
+document.getElementById("tg").addEventListener("click",function(){
+  document.body.classList.toggle("hide");
+  this.textContent=document.body.classList.contains("hide")?"عربي: OFF":"عربي: ON";
+});
+document.addEventListener("click",function(e){
+  const t=e.target;
+  const op=t.closest(".op");
+  if(op){
+    const q=op.closest(".q");
+    if(q.getAttribute("data-d"))return;
+    q.setAttribute("data-d","1");
+    const i=+q.getAttribute("data-q"),j=+op.getAttribute("data-o"),right=Q[i][3];
+    if(j===right){op.classList.add("ok");sc++}else{op.classList.add("no");q.querySelectorAll(".op")[right].classList.add("ok")}
+    dn++;showRes();return;
+  }
+  if(t.closest("[data-r]")){
+    document.querySelectorAll(".q").forEach(function(q){q.removeAttribute("data-d");q.querySelectorAll(".op").forEach(function(o){o.classList.remove("ok","no")})});
+    sc=0;dn=0;document.getElementById("res").textContent="";return;
+  }
+  const sb=t.closest("[data-s]");
+  if(sb){
+    const st=sb.closest(".st"),ps=Array.prototype.slice.call(st.querySelectorAll(".sp"));
+    const i=ps.findIndex(function(p){return p.classList.contains("on")});
+    const n=Math.max(0,Math.min(ps.length-1,i+Number(sb.getAttribute("data-s"))));
+    ps[i].classList.remove("on");ps[n].classList.add("on");
+    st.querySelector(".sc2").textContent=(n+1)+"/"+ps.length;return;
+  }
+  const z=t.closest("[data-i]");
+  if(z){
+    const box=z.closest(".sv");
+    box.querySelectorAll("[data-i]").forEach(function(x){x.classList.remove("s")});
+    z.classList.add("s");
+    box.querySelector(".info").innerHTML=D[z.getAttribute("data-i")];return;
+  }
+  const tg=t.closest("[data-t]");
+  if(tg){
+    if(tg.classList.contains("hd")){tg.parentNode.classList.toggle("o")}else{tg.classList.toggle("o")}
+  }
+});
+</script>
+</body>
+</html>

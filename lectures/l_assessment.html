@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nursing Assessment</title>
+<style>
+:root{--p:#0f766e;--pl:#e6f4f1;--bd:#b7ddd6;--tx:#1f2937;--gr:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:var(--tx);line-height:1.55;font-size:16px}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--bd);padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+h1{font-size:16px;margin:0;color:var(--p)}
+button{font:inherit;cursor:pointer}
+#tg{background:var(--p);color:#fff;border:0;border-radius:20px;padding:7px 14px;font-size:14px}
+main{max-width:820px;margin:0 auto;padding:10px}
+details.card{border:1px solid var(--bd);border-radius:14px;margin:10px 0;background:#fff;overflow:hidden}
+details.card>summary{list-style:none;padding:14px;font-weight:700;color:var(--p);background:var(--pl);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"▾"}
+details[open]>summary::after{content:"▴"}
+.body{padding:12px 14px}
+.ln{margin:8px 0}
+.ar{font-size:13.5px;color:var(--gr);direction:rtl;text-align:right;margin-top:2px;line-height:1.7}
+body.noar .ar{display:none}
+mark{background:#fff176;padding:0 3px;border-radius:3px}
+h3{color:var(--p);font-size:15px;margin:16px 0 6px;border-bottom:1px solid var(--bd);padding-bottom:3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:8px 0}
+.pop{border:1px solid var(--bd);border-radius:10px;background:var(--pl);padding:10px;cursor:pointer}
+.pt{font-weight:600;color:var(--p)}
+.pt::after{content:" ＋";color:var(--gr)}
+.pop.open .pt::after{content:" －"}
+.pb{display:none;margin-top:6px;background:#fff;border-radius:8px;padding:6px 8px}
+.pop.open .pb{display:block}
+.tbs{display:flex;flex-wrap:wrap;gap:6px}
+.tb{border:1px solid var(--bd);background:#fff;color:var(--p);border-radius:16px;padding:6px 12px;font-size:14px}
+.tb.on{background:var(--p);color:#fff}
+.tp{display:none;padding-top:8px}
+.tp.on{display:block}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:6px 0}
+th,td{border:1px solid var(--bd);padding:7px;vertical-align:top;text-align:left}
+th{background:var(--pl);color:var(--p)}
+.info{background:var(--pl);border:1px dashed var(--p);border-radius:10px;padding:10px;margin-top:8px;min-height:48px}
+.info .ar{display:block}
+.sw{text-align:center}
+.sw svg{max-width:340px;width:100%;height:auto}
+svg [data-info]{cursor:pointer}
+.stp{border:1px solid var(--bd);border-radius:10px;padding:10px;margin:8px 0}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.nav button,#rs{background:var(--p);color:#fff;border:0;border-radius:8px;padding:7px 14px}
+.q{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:10px 0}
+.o{display:block;width:100%;text-align:left;border:1px solid var(--bd);background:#fff;border-radius:10px;padding:9px;margin:6px 0}
+.o.ok{background:#d1fae5;border-color:#10b981}
+.o.no{background:#fee2e2;border-color:#ef4444}
+.big{font-size:20px}
+</style></head><body>
+<header><h1>🩺 Nursing Assessment</h1><button id="tg">إخفاء العربي</button></header>
+<main id="app"></main>
+<script>
+function L(e,a){return '<div class="ln"><div>'+e+'</div><div class="ar">'+a+'</div></div>';}
+function C(e,a){return e+'<div class="ar">'+a+'</div>';}
+function P(a){return '<div class="grid">'+a.map(function(x){return '<div class="pop"><div class="pt">'+x[0]+'</div><div class="pb">'+L(x[1],x[2])+'</div></div>';}).join('')+'</div>';}
+function TB(h,r){return '<div class="tw"><table><tr>'+h.map(function(x){return '<th>'+x+'</th>';}).join('')+'</tr>'+r.map(function(x){return '<tr>'+x.map(function(c){return '<td>'+c+'</td>';}).join('')+'</tr>';}).join('')+'</table></div>';}
+function T(a){var b='<div class="tabs"><div class="tbs">',p='<div class="tps">';a.forEach(function(x,i){b+='<button class="tb'+(i?'':' on')+'">'+x[0]+'</button>';p+='<div class="tp'+(i?'':' on')+'">'+x[1]+'</div>';});return b+'</div>'+p+'</div></div>';}
+function ST(a){return '<div class="stp" data-i="0">'+a.map(function(x){return '<div class="sp">'+L(x[0],x[1])+'</div>';}).join('')+'<div class="nav"><button class="bk">◀ Back</button><b class="ct"></b><button class="nx">Next ▶</button></div></div>';}
+function upd(s){var i=+s.dataset.i,sp=s.querySelectorAll('.sp');sp.forEach(function(e,k){e.style.display=(k===i)?'block':'none';});s.querySelector('.ct').textContent='Step '+(i+1)+'/'+sp.length;}
+
+var S=[];
+
+/* 1 */
+S.push(['🎯 1. Objectives & Nursing Process',
+'<h3>Lecture objectives (tap)</h3>'+
+P([['1–3 Nursing process',`Define <mark>nursing process</mark> & <mark>assessment</mark>, state the <mark>purposes</mark> of the nursing process, list its <mark>five steps</mark>.`,`تعرّف عملية التمريض والتقييم، وتقول أغراضها، وتعدّد خطواتها الخمسة.`],
+['4–5 Assessment',`Identify the <mark>purposes</mark> of assessment and recognize the <mark>types</mark> of assessment.`,`تعرف أغراض التقييم وأنواعه.`],
+['6–9 Data',`Explain <mark>elements/activities</mark> of assessment, discuss <mark>sources of data</mark>, enumerate <mark>methods of data collection</mark>, identify <mark>characteristics</mark> of data collection.`,`تشرح أنشطة التقييم ومصادر البيانات وطرق جمعها وخصائصها.`],
+['10–12 History & symptoms',`List components of <mark>nursing health history</mark>, state <mark>classification of symptoms</mark>, <mark>record and report</mark> signs and symptoms.`,`تعدّد مكونات التاريخ الصحي التمريضي، وتصنيف الأعراض، وتسجيل وإبلاغ العلامات والأعراض.`]])+
+'<h3>Definition: Nursing process</h3>'+
+L(`The <mark>framework for professional nursing practice</mark>. It directs nursing activities for health <mark>promotion, protection and disease prevention</mark>.`,`هو الإطار اللي بيقوم عليه شغل التمريض المهني، وبيوجّه الأنشطة لتعزيز الصحة وحمايتها والوقاية من المرض.`)+
+L(`<b>Or:</b> an <mark>organized sequence of problem-solving steps</mark> used to identify and manage the health problems of clients.`,`أو: خطوات منظمة لحل المشكلات بنستخدمها لتحديد وإدارة المشاكل الصحية للمرضى.`)+
+'<h3>Purposes of the nursing process</h3>'+
+P([['1️⃣ Framework for care',`Provides a <mark>framework for care</mark> that meets the individual needs of the <mark>patient, family and community</mark>.`,`إطار للرعاية بيلبي احتياجات المريض والأسرة والمجتمع.`],
+['2️⃣ Efficiency',`<mark>Enhances nursing efficiency</mark> by <mark>standardizing</mark> nursing practice.`,`بيزوّد كفاءة التمريض عن طريق توحيد الممارسة.`],
+['3️⃣ Unity of language',`Provides a <mark>unity of language</mark> for the nursing profession.`,`بيوحّد لغة مهنة التمريض.`],
+['4️⃣ Systematic method',`Provides an <mark>orderly & systematic method</mark> for planning & providing care.`,`طريقة منظمة لتخطيط الرعاية وتقديمها.`],
+['5️⃣ Economic',`<mark>Economic</mark> purposes.`,`أغراض اقتصادية.`]])]);
+
+/* 2 */
+S.push(['🔄 2. Steps of the Nursing Process',
+L(`The nursing process has <mark>5 steps</mark> that form a <mark>cycle</mark>. 👇 Tap each box.`,`عملية التمريض 5 خطوات في دايرة. اضغط على كل مربع.`)+
+`<div class="sw"><svg viewBox="0 0 340 320">
+<circle cx="170" cy="165" r="105" fill="none" stroke="#b7ddd6" stroke-width="3" stroke-dasharray="6 5"/>
+<text x="170" y="160" text-anchor="middle" font-size="14" fill="#0f766e" font-weight="700">NURSING</text><text x="170" y="178" text-anchor="middle" font-size="14" fill="#0f766e" font-weight="700">PROCESS</text>
+<g data-info="<b>1. Assessing (Assessment)</b>: <mark>gather data</mark>.<span class='ar'>التقييم: جمع البيانات.</span>"><rect x="115" y="12" width="110" height="38" rx="10" fill="#e6f4f1" stroke="#0f766e"/><text x="170" y="36" text-anchor="middle" font-size="12" fill="#0f766e">1 Assessment</text></g>
+<g data-info="<b>2. Analyzing (Diagnosis)</b>: <mark>identify the problem</mark> and <mark>formulate the nursing diagnosis</mark>.<span class='ar'>التشخيص: تحدد المشكلة وتكوّن التشخيص التمريضي.</span>"><rect x="228" y="92" width="104" height="38" rx="10" fill="#e6f4f1" stroke="#0f766e"/><text x="280" y="116" text-anchor="middle" font-size="12" fill="#0f766e">2 Diagnosis</text></g>
+<g data-info="<b>3. Planning (Outcome identification and planning)</b>: <mark>write the care plan to meet goals</mark>.<span class='ar'>التخطيط: تكتب خطة الرعاية عشان تحقق الأهداف.</span>"><rect x="195" y="248" width="125" height="50" rx="10" fill="#e6f4f1" stroke="#0f766e"/><text x="257" y="270" text-anchor="middle" font-size="11" fill="#0f766e">3 Outcome ident.</text><text x="257" y="285" text-anchor="middle" font-size="11" fill="#0f766e">and Planning</text></g>
+<g data-info="<b>4. Implementing (Implementation)</b>: <mark>carry out the plan</mark>.<span class='ar'>التنفيذ: تنفذ الخطة.</span>"><rect x="20" y="254" width="120" height="38" rx="10" fill="#e6f4f1" stroke="#0f766e"/><text x="80" y="278" text-anchor="middle" font-size="12" fill="#0f766e">4 Implementation</text></g>
+<g data-info="<b>5. Evaluating (Evaluation)</b>: <mark>collect objective data</mark> to determine the extent to which goals were achieved, then <mark>revise the plan as needed</mark>.<span class='ar'>التقييم النهائي: تجمع بيانات موضوعية تشوف الأهداف اتحققت لأي درجة، وتعدّل الخطة لو لزم.</span>"><rect x="8" y="92" width="104" height="38" rx="10" fill="#e6f4f1" stroke="#0f766e"/><text x="60" y="116" text-anchor="middle" font-size="12" fill="#0f766e">5 Evaluation</text></g>
+<g fill="#0f766e" font-size="16"><text x="232" y="62">➜</text><text x="290" y="200">➜</text><text x="150" y="304" transform="rotate(180 150 300)">➜</text><text x="30" y="205">➜</text><text x="82" y="68">➜</text></g>
+</svg>
+<div class="info">👆 Tap a box</div></div>`+
+'<h3>Step by step (Next / Back)</h3>'+
+ST([[`<b>Assessing</b> → <mark>Gather data</mark>.`,`التقييم: تجمع البيانات.`],
+[`<b>Analyzing</b> → <mark>I.D. problem, formulate nursing diagnosis</mark>.`,`التحليل (التشخيص): تحدد المشكلة وتكتب التشخيص التمريضي.`],
+[`<b>Planning</b> → <mark>Write care plan to meet goals</mark>.`,`التخطيط: تكتب خطة الرعاية لتحقيق الأهداف.`],
+[`<b>Implementing</b> → <mark>Carry out plan</mark>.`,`التنفيذ: تنفذ الخطة.`],
+[`<b>Evaluating</b> → <mark>Collect objective data</mark> to determine the extent to which goals were achieved. <mark>Revise plan as needed</mark>.`,`التقييم: تجمع بيانات موضوعية تعرف بيها الأهداف اتحققت قد إيه، وتعدّل الخطة لو محتاج.`]])]);
+
+/* 3 */
+S.push(['📋 3. Assessment: Definition, Purpose & Activities',
+'<h3>Definition</h3>'+
+L(`The <mark>first step</mark> in the nursing process. It involves systematic <mark>Collection, Validation, Organization, Interpretation and Documentation</mark> of data for use by health care professionals.`,`أول خطوة في عملية التمريض، وفيها جمع وتأكيد وتنظيم وتفسير وتوثيق البيانات بشكل منظم عشان الفريق الصحي يستخدمها.`)+
+'<h3>Step 1: Data collection</h3>'+
+L(`Assessment is a collection of all data including <mark>subjective and objective data</mark>.`,`التقييم هو جمع كل البيانات، الذاتية والموضوعية.`)+
+L(`A <mark>complete nursing assessment</mark> of the client includes:`,`التقييم التمريضي الكامل بيشمل:`)+
+P([['1️⃣ History','<mark>Health and Medical history</mark>','التاريخ الصحي والطبي'],['2️⃣ Physical','<mark>Head-to-Toe assessment</mark>','فحص من الراس للقدم'],['3️⃣ Client interview','<mark>Verbal interview with client</mark>','مقابلة شفهية مع المريض'],['4️⃣ Others interview','<mark>Verbal interview with significant others</mark>','مقابلة مع المقربين من المريض'],['5️⃣ Tests','<mark>Results of diagnostic tests</mark>','نتايج الفحوصات التشخيصية']])+
+'<h3>Purposes of assessment</h3>'+
+P([['1️⃣ Database',`To <mark>establish a database</mark> concerning a client's <mark>physical, psychosocial and emotional</mark> health.`,`تكوّن قاعدة بيانات عن صحة المريض الجسدية والنفسية الاجتماعية والعاطفية.`],
+['2️⃣ Identify problems',`To identify <mark>health-promoting behaviors</mark> as well as <mark>actual and/or potential health problems</mark>.`,`تحدد السلوكيات الصحية الإيجابية والمشاكل الفعلية أو المحتملة.`],
+['3️⃣ Establish care',`To obtain data that helps the nurse <mark>establish nursing care</mark>.`,`تجمع بيانات تساعد الممرضة تضع الرعاية التمريضية.`],
+['4️⃣ Evaluate progress',`To <mark>evaluate the progress</mark> of the patient's health problem.`,`تقيّم تقدم مشكلة المريض الصحية.`]])+
+'<h3>Key activities of assessment (Next / Back)</h3>'+
+ST([[`<mark>Collecting</mark> data (from a variety of sources)`,`جمع البيانات من مصادر متنوعة.`],
+[`<mark>Validating</mark> the data`,`التأكد من صحة البيانات.`],
+[`<mark>Organizing</mark> the data`,`تنظيم البيانات.`],
+[`<mark>Interpreting</mark> the data`,`تفسير البيانات.`],
+[`<mark>Documenting</mark> the data`,`توثيق البيانات.`]])]);
+
+/* 4 */
+S.push(['🧾 4. Types & Sources of Data',
+'<h3>Types of data</h3>'+
+TB(['','Subjective','Objective'],[
+['<b>Definition</b>',C(`Data from the <mark>client's point of view</mark>: <mark>feelings, perceptions, concerns</mark>`,`بيانات من وجهة نظر المريض: مشاعره وإدراكه وقلقه`),C(`<mark>Observable & measurable</mark> data`,`بيانات ممكن تتلاحظ وتتقاس`)],
+['<b>Main way to collect</b>',C(`<mark>Interview</mark>`,`المقابلة`),C(`<mark>Physical assessment</mark> and <mark>Lab and diagnostic tests</mark>`,`الفحص الجسدي والتحاليل والفحوصات التشخيصية`)]])+
+'<h3>Sources of data</h3>'+
+T([['🥇 Primary',L(`<mark>Client</mark>`,`المريض نفسه.`)+L(`<mark>Physical examination</mark>`,`الفحص الجسدي.`)],
+['🥈 Secondary',L(`<mark>Family members</mark>`,`أفراد الأسرة.`)+L(`<mark>Other health care providers</mark>`,`باقي مقدمي الرعاية الصحية.`)+L(`<mark>Medical records</mark>`,`السجلات الطبية.`)]])]);
+
+/* 5 */
+S.push(['🗂️ 5. Types of Assessment',
+L(`There are <mark>7 types</mark> (a–g). 👇 Tap each one.`,`فيه 7 أنواع للتقييم. اضغط على كل نوع.`)+
+P([['a. Initial',`Assessment performed <mark>within a specified time on admission</mark> (nursing admission assessment).`,`تقييم بيتعمل في وقت محدد عند دخول المريض.`],
+['b. Problem-focused',`Used to <mark>determine the status of a specific problem</mark> identified in an earlier assessment.`,`بنستخدمه نعرف حالة مشكلة معينة اتحددت في تقييم سابق.`],
+['c. Emergency',`<mark>Rapid</mark> assessment done during any <mark>physiologic crisis</mark> to identify <mark>life-threatening problems</mark>: client's <mark>airway, breathing status and circulation</mark>.`,`تقييم سريع وقت أي أزمة فسيولوجية عشان نكتشف المشاكل المهددة للحياة: المجرى الهوائي والتنفس والدورة الدموية.`],
+['d. Time-lapsed',`<mark>Reassessment</mark> of the client's functional health pattern done <mark>several months after</mark> the initial assessment to <mark>compare current status to baseline data</mark>.`,`إعادة تقييم بعد شهور من التقييم الأول عشان نقارن الحالة الحالية بالبيانات الأساسية.`],
+['e. Comprehensive',`Provides <mark>baseline data</mark> including <mark>complete health history and current needs assessment</mark>.`,`بيدّي بيانات أساسية فيها التاريخ الصحي الكامل وتقييم الاحتياجات الحالية.`],
+['f. Focused',`<mark>Limited in scope</mark> to focus on a particular <mark>need, concern or potential risk</mark>.`,`محدود النطاق بيركز على احتياج أو قلق أو خطر محتمل معين.`],
+['g. Ongoing',`Includes <mark>systematic monitoring and observation</mark> related to a specific problem.`,`متابعة وملاحظة منظمة لمشكلة معينة.`]])]);
+
+/* 6 */
+S.push(['🔍 6. Methods of Data Collection',
+L(`There are <mark>6 methods</mark>. 👇 Tap each.`,`فيه 6 طرق لجمع البيانات. اضغط على كل واحدة.`)+
+P([['1️⃣ Interview',`A <mark>planned, purposeful conversation</mark> with the client. Purposes: to <mark>get information, identify problems, evaluate change, teach, or provide support/counseling</mark>. Used while taking the <mark>nursing history</mark>.`,`حوار مخطط وله هدف مع المريض، بنستخدمه نجمع معلومات ونحدد مشاكل ونقيّم التغيير ونعلّم ونقدم دعم أو إرشاد، وبيُستخدم وقت أخذ التاريخ التمريضي.`],
+['2️⃣ Physical examination techniques',`Uses the senses of <mark>sight, hearing, smell and touch</mark> to detect health problems. <mark>Four techniques</mark>: inspection, palpation, percussion, auscultation. 👇 see below.`,`بيستخدم البصر والسمع والشم واللمس عشان يكتشف المشاكل الصحية، وفيه 4 تقنيات (تحت).`],
+['3️⃣ Intuition',`Use of <mark>insight and clinical experience</mark> to make clinical judgments about the client. It helps the nurse <mark>analyze cues rapidly, make clinical decisions and implement nursing actions</mark>.`,`استخدام الحدس والخبرة الإكلينيكية في الحكم على حالة المريض، وبيساعد الممرضة تحلل الإشارات بسرعة وتاخد قرارات وتنفذ.`],
+['4️⃣ Observation',`Gather data using the <mark>5 senses and instruments</mark>: <mark>See, Smell, Hear, Touch, Taste</mark>.`,`جمع البيانات بالحواس الخمس والأدوات: نشوف ونشم ونسمع نلمس ونتذوق.`],
+['5️⃣ Laboratory & diagnostic tests',`Objective data from <mark>laboratory and diagnostic tests</mark>.`,`بيانات موضوعية من التحاليل والفحوصات التشخيصية.`],
+['6️⃣ Review of system approach',`<mark>Examine only the particular area affected</mark>.`,`تفحص بس المنطقة المصابة.`]])+
+'<h3>Physical examination: 4 techniques (tap)</h3>'+
+P([['👀 Inspection','Looking at (visual observation) the client using <mark>sight</mark>.','النظر والملاحظة بالعين.'],['✋ Palpation','Examining by <mark>touch</mark> using the hands.','الفحص باللمس باليد.'],['🥁 Percussion','Tapping the body to produce sounds and <mark>hear</mark> them.','الطرق على الجسم وسماع الصوت الناتج.'],['🩺 Auscultation','<mark>Listening</mark> to body sounds, usually with a <mark>stethoscope</mark>.','الاستماع لأصوات الجسم بالسماعة.']])+
+'<div class="ar">ملحوظة: شرح التقنيات الأربعة ده إضافة للتوضيح، المحاضرة بتذكر أسماءهم بس.</div>']);
+
+/* 7 */
+S.push(['✅ 7. Characteristics of Assessment',
+L(`Good assessment is:`,`التقييم الجيد بيكون:`)+
+P([['1️⃣ Systematic',`Follows an organized approach: <mark>head to toe</mark>, <mark>major body systems</mark>, or <mark>functional health patterns</mark>.`,`منظم: من الراس للقدم، أو حسب أجهزة الجسم الرئيسية، أو حسب أنماط الصحة الوظيفية.`],
+['2️⃣ Ongoing',`<mark>Continuous</mark>, not done only once.`,`مستمر مش مرة واحدة.`],
+['3️⃣ Data verification',`<mark>Verify</mark> the data collected.`,`التحقق من صحة البيانات.`],
+['4️⃣ Data organization',`<mark>Organize</mark> the data.`,`تنظيم البيانات.`],
+['5️⃣ Analyze data',`<mark>Analyze</mark> the data.`,`تحليل البيانات.`],
+['6️⃣ Data document',`<mark>Document</mark> the data.`,`توثيق البيانات.`]])]);
+
+/* 8 */
+S.push(['📖 8. Components of a Nursing Health History',
+T([
+['🪪 Biographical',L(`<b>Biographical data</b> includes:`,`البيانات الشخصية بتشمل:`)+
+P([['Full name','','الاسم الكامل'],['Address & telephone numbers','','العنوان وأرقام التليفون'],['Birth date & birth place','','تاريخ ومكان الميلاد'],['Sex','','النوع'],['Education','','التعليم'],['Religion','','الديانة'],['Marital status','','الحالة الاجتماعية'],['Occupation','','المهنة']])],
+['🤒 Present & Past',L(`<b>History of present illness:</b> gathering information relevant to the <mark>chief complaint</mark> and the client's problem. Pain is assessed using <mark>PQRST</mark>.`,`تاريخ المرض الحالي: معلومات عن الشكوى الرئيسية ومشكلة المريض، والألم بيتقيّم بـ PQRST.`)+
+L(`<b>Past health history:</b><br>- <mark>Childhood illness</mark><br>- <mark>History of accidents and disabling injuries</mark>`,`التاريخ الصحي السابق: أمراض الطفولة، والحوادث والإصابات المسببة لإعاقة.`)+
+L(`<b>Also:</b><br>- <mark>History of hospitalization</mark>: time of admission, date, admitting complaint, discharge diagnosis and follow-up care<br>- <mark>History of operations</mark>: how and why it was done<br>- <mark>History of immunizations and allergies</mark><br>- <mark>Physical examinations and diagnostic tests</mark>`,`وكمان: تاريخ دخول المستشفى (وقت وتاريخ الدخول والشكوى والتشخيص عند الخروج والمتابعة)، وتاريخ العمليات (إزاي وليه)، والتطعيمات والحساسية، والفحوصات.`)],
+['👪 Family',L(`<b>Family history:</b><br>- Family history of <mark>communicable diseases</mark><br>- <mark>Heredity factors</mark> associated with causes of some diseases<br>- <mark>Health of family members</mark><br>- <mark>Cause of death</mark> of family members (immediate and extended family)`,`التاريخ العائلي: أمراض معدية في العيلة، عوامل وراثية، صحة أفراد الأسرة، وسبب وفاة أفراد الأسرة القريبة والممتدة.`)],
+['🧠 Psychosocial & Environmental',L(`<b>Psychosocial history:</b> how the client and his family <mark>cope with disease or stress</mark> and how they respond to illness and health.`,`التاريخ النفسي الاجتماعي: إزاي المريض وأسرته بيتعاملوا مع المرض والضغط وبيستجيبوا للصحة والمرض.`)+
+L(`<b>Environmental history:</b> <mark>Lifestyle</mark> includes <mark>personal habits, diets, sleep or rest patterns</mark>.`,`التاريخ البيئي: نمط الحياة وفيه العادات الشخصية والأنظمة الغذائية وأنماط النوم والراحة.`)]])]);
+
+/* 9 */
+S.push(['🌡️ 9. Symptoms: Types, Recording & Reporting',
+'<h3>Types of symptoms</h3>'+
+P([['1️⃣ Local symptoms',`Symptoms present in a <mark>specific local area</mark> of the body.`,`أعراض موجودة في مكان محدد من الجسم.`],
+['2️⃣ Prodromal symptoms',`Symptoms of the <mark>initial stages of the disease</mark>.`,`أعراض بتظهر في المراحل الأولى من المرض.`],
+['3️⃣ Cardinal symptoms',`The <mark>main (cardinal)</mark> symptoms of the disease.`,`الأعراض الرئيسية للمرض.`]])+
+'<div class="ar">ملحوظة: شرح Local و Cardinal إضافة للتوضيح، المحاضرة بتذكر الأسماء وتعريف Prodromal.</div>'+
+'<h3>Assessing any body secretion or excretion</h3>'+
+L(`For <mark>vomitus, stool, sputum or wound discharge</mark>, the assessment should include:`,`لأي إفراز أو إخراج زي القيء والبراز والبلغم وإفرازات الجرح، التقييم لازم يشمل:`)+
+P([['📏 Amount or volume','','الكمية أو الحجم'],['🔁 Frequency','','عدد المرات'],['👃 Odor','','الرائحة'],['🧪 Constituents','Contains <mark>blood</mark>, or abnormal components such as <mark>pus</mark>','المكونات: فيها دم أو مكونات مش طبيعية زي الصديد']])+
+'<h3>Recording & reporting signs and symptoms</h3>'+
+L(`The nurse should provide a <mark>complete description</mark> of any signs and symptoms.`,`الممرضة لازم تدّي وصف كامل لأي علامات وأعراض.`)+
+L(`<b>For assessing pain: <mark>PQRST</mark></b> (👇 tap letters)`,`لتقييم الألم نستخدم PQRST (اضغط على الحروف).`)+
+P([['P','<mark>Provocation / Palliation</mark>: what causes it or relieves it','إيه اللي بيسببه أو بيخففه'],['Q','<mark>Quality</mark>: type of pain','نوع الألم'],['R','<mark>Region / Radiation</mark>: location and spread','مكانه وهل بينتشر'],['S','<mark>Severity</mark>: how strong','شدته'],['T','<mark>Timing</mark>: onset and duration','التوقيت ومدته']])+
+'<div class="ar">ملحوظة: المحاضرة كاتبة PQRST بس، والمعاني دي من المنهج المعروف.</div>'+
+L(`<b>In addition:</b> the <mark>effect of pain on activities of daily living</mark> (ADL).`,`وكمان تأثير الألم على أنشطة الحياة اليومية.`)]);
+
+/* 10 numbers */
+S.push(['🔢 Numbers to remember',
+P([['<span class="big">5</span>','Steps of the nursing process','خطوات عملية التمريض'],
+['<span class="big">5</span>','Key activities of assessment: collect, validate, organize, interpret, document','أنشطة التقييم الأساسية'],
+['<span class="big">5</span>','Parts of a complete nursing assessment','مكونات التقييم الكامل'],
+['<span class="big">4</span>','Purposes of assessment','أغراض التقييم'],
+['<span class="big">2</span>','Types of data: subjective & objective','نوعين من البيانات'],
+['<span class="big">2</span>','Sources: primary & secondary','نوعين مصادر'],
+['<span class="big">7</span>','Types of assessment (a–g)','أنواع التقييم'],
+['<span class="big">6</span>','Methods of data collection','طرق جمع البيانات'],
+['<span class="big">4</span>','Physical examination techniques','تقنيات الفحص الجسدي'],
+['<span class="big">5</span>','Senses used in observation','الحواس الخمسة في الملاحظة'],
+['<span class="big">5</span>','PQRST letters for pain','حروف PQRST للألم']])]);
+
+/* 11 quiz */
+S.push(['📝 Quiz (10 questions)','<div id="quiz"></div><div id="sc" class="info"></div><p><button id="rs">🔄 Restart</button></p>']);
+
+var Q=[
+{q:'How many steps are in the nursing process?',a:'كام خطوة في عملية التمريض؟',o:['3','4','5','7'],c:2},
+{q:'What is the FIRST step of the nursing process?',a:'أول خطوة في عملية التمريض؟',o:['Planning','Assessment','Implementation','Evaluation'],c:1},
+{q:'Which one is NOT a key activity of assessment?',a:'أنهي واحد مش من أنشطة التقييم الأساسية؟',o:['Validating the data','Organizing the data','Documenting the data','Carrying out the plan'],c:3},
+{q:'Data from the client\'s point of view (feelings, perceptions, concerns) are:',a:'بيانات من وجهة نظر المريض (مشاعر وإدراك وقلق) هي:',o:['Objective data','Subjective data','Secondary data','Laboratory data'],c:1},
+{q:'Which is the main way to collect SUBJECTIVE data?',a:'أنهي طريقة أساسية لجمع البيانات الذاتية؟',o:['Interview','Lab tests','Physical assessment','Medical records'],c:0},
+{q:'Which of the following is a SECONDARY source of data?',a:'أنهي واحد مصدر ثانوي للبيانات؟',o:['The client','Physical examination','Medical records','The client\'s own feelings'],c:2},
+{q:'A rapid assessment during a physiologic crisis to identify life-threatening problems is:',a:'تقييم سريع وقت الأزمة لاكتشاف المشاكل المهددة للحياة هو:',o:['Initial assessment','Emergency assessment','Time-lapsed assessment','Ongoing assessment'],c:1},
+{q:'Reassessment done several months after the initial assessment to compare with baseline data is:',a:'إعادة تقييم بعد شهور من التقييم الأول للمقارنة بالبيانات الأساسية هي:',o:['Time-lapsed assessment','Focused assessment','Comprehensive assessment','Emergency assessment'],c:0},
+{q:'Which is NOT one of the four physical examination techniques?',a:'أنهي واحد مش من تقنيات الفحص الجسدي الأربعة؟',o:['Inspection','Palpation','Interview','Auscultation'],c:2},
+{q:'PQRST is used for assessing:',a:'الـ PQRST بنستخدمه لتقييم:',o:['Pain','Pulse','Posture','Urine output'],c:0}];
+var ans={};
+function score(){var n=0,r=0,k;for(k in ans){n++;if(ans[k])r++;}
+var s='Answered '+n+'/'+Q.length+' — Score: <b>'+r+'/'+Q.length+'</b>';
+if(n===Q.length)s+=(r>=9?' 🌟 Excellent!':r>=7?' 👍 Good':' 📖 Review the cards again');
+document.getElementById('sc').innerHTML=s;}
+function drawQuiz(){var h='';Q.forEach(function(q,n){h+='<div class="q"><b>'+(n+1)+'. '+q.q+'</b><div class="ar">'+q.a+'</div>';q.o.forEach(function(o,i){h+='<button class="o" data-q="'+n+'" data-i="'+i+'">'+o+'</button>';});h+='</div>';});document.getElementById('quiz').innerHTML=h;ans={};score();}
+
+var app=document.getElementById('app');
+S.forEach(function(s){app.insertAdjacentHTML('beforeend','<details class="card"><summary>'+s[0]+'</summary><div class="body">'+s[1]+'</div></details>');});
+drawQuiz();
+document.querySelectorAll('.stp').forEach(upd);
+
+document.addEventListener('click',function(e){
+var t=e.target,x;
+if(x=t.closest('.pop')){x.classList.toggle('open');return;}
+if(x=t.closest('.tb')){var w=x.closest('.tabs'),bs=x.parentNode.children,ps=w.querySelector('.tps').children,i=Array.prototype.indexOf.call(bs,x);
+for(var k=0;k<bs.length;k++){bs[k].classList.toggle('on',k===i);ps[k].classList.toggle('on',k===i);}return;}
+if(x=t.closest('.nx,.bk')){var s=x.closest('.stp'),len=s.querySelectorAll('.sp').length,j=+s.dataset.i+(x.classList.contains('nx')?1:-1);j=Math.max(0,Math.min(len-1,j));s.dataset.i=j;upd(s);return;}
+if(x=t.closest('[data-info]')){x.closest('.sw').querySelector('.info').innerHTML=x.getAttribute('data-info');return;}
+if(x=t.closest('.o')){var q=+x.dataset.q,i2=+x.dataset.i;if(ans.hasOwnProperty(q))return;
+var ok=(i2===Q[q].c);ans[q]=ok;x.classList.add(ok?'ok':'no');
+if(!ok){x.parentNode.querySelectorAll('.o')[Q[q].c].classList.add('ok');}
+score();return;}
+if(t.id==='rs'){drawQuiz();}
+});
+document.getElementById('tg').onclick=function(){document.body.classList.toggle('noar');this.textContent=document.body.classList.contains('noar')?'إظهار العربي':'إخفاء العربي';};
+</script></body></html>

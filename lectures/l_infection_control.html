@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infection Control – Summary</title>
+<style>
+:root{--p:#0f766e;--pl:#e8f5f2;--pm:#b7dfd8;--t:#1f2d2b;--g:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--t);font-family:Segoe UI,Tahoma,Arial,sans-serif;line-height:1.55;font-size:16px}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:2px solid var(--pm);padding:10px 12px}
+h1{margin:0 0 6px;font-size:18px;color:var(--p)}
+.bar{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--p);color:#fff;border:0;border-radius:8px;padding:7px 12px;font-size:14px}
+.btn.o{background:var(--pl);color:var(--p);border:1px solid var(--pm)}
+main{max-width:820px;margin:0 auto;padding:12px}
+.card{border:1px solid var(--pm);border-radius:12px;margin-bottom:10px;overflow:hidden;background:#fff}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;background:var(--pl);color:var(--p);font-weight:700;cursor:pointer}
+.ch small{display:block;font-weight:400;font-size:13px}
+.ch i{font-style:normal;transition:.2s}.open>.ch i{transform:rotate(180deg)}
+.cb{display:none;padding:12px 14px}.open>.cb{display:block}
+.en{font-size:16px}
+.ar{font-size:13px;color:var(--g);text-align:right;direction:rtl;margin:1px 0 8px}
+.hide-ar .ar{display:none}
+mark{background:#fff176;padding:0 2px;border-radius:3px}
+ul{padding-left:18px;margin:6px 0}
+.tip{background:#f1f8f6;border-left:4px solid var(--p);padding:6px 10px;border-radius:6px;margin:6px 0;font-size:14px}
+.tip .ar{display:inline}
+h4{margin:10px 0 4px;color:var(--p)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.tc{border:1px solid var(--pm);border-radius:10px;background:#fff;overflow:hidden}
+.tch{padding:9px 10px;background:var(--pl);font-weight:600;cursor:pointer;font-size:15px;color:var(--p)}
+.tcb{display:none;padding:8px 10px;font-size:14px}.tc.open .tcb{display:block}
+.tc.open .tch{background:var(--p);color:#fff}
+.tw{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:420px}
+th{background:var(--p);color:#fff;padding:7px;text-align:left}
+td{border:1px solid var(--pm);padding:6px;vertical-align:top}
+tr:nth-child(even) td{background:#f6fbfa}
+.svg{width:100%;max-width:340px;display:block;margin:6px auto}
+.nd circle{fill:var(--pl);stroke:var(--p);stroke-width:2;cursor:pointer}
+.nd.sel circle{fill:var(--p)}.nd.sel text{fill:#fff}
+.nd text{font-size:11px;text-anchor:middle;fill:var(--t);pointer-events:none;font-weight:600}
+.info{background:var(--pl);border-radius:10px;padding:10px;min-height:50px;font-size:14px}
+.step{background:var(--pl);border-radius:10px;padding:10px;font-size:15px}
+.sn{font-size:12px;color:var(--g)}
+.nav{display:flex;justify-content:space-between;margin:6px 0}
+.nav button{background:var(--p);color:#fff;border:0;border-radius:8px;padding:7px 16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{background:var(--pl);border:1px solid var(--pm);border-radius:20px;padding:4px 12px;font-size:14px}
+.q{border-bottom:1px solid var(--pm);padding:8px 0}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--pm);border-radius:8px;padding:8px;margin:5px 0;font-size:15px}
+.opt.ok{background:#d1f5e4;border-color:#16a34a}
+.opt.no{background:#fde2e2;border-color:#dc2626}
+.score{font-weight:700;color:var(--p);margin:10px 0;font-size:17px}
+</style>
+</head>
+<body>
+<header>
+<h1>🦠 Infection Control – Quick Review</h1>
+<div class="bar">
+<button class="btn" id="tr" onclick="tgAr()">Hide Arabic / إخفاء العربي</button>
+<button class="btn o" onclick="allc(1)">Open all</button>
+<button class="btn o" onclick="allc(0)">Close all</button>
+</div>
+</header>
+<main id="app"></main>
+<script>
+var $=function(i){return document.getElementById(i)};
+function L(e,a){return "<div class='en'>"+e+"</div><div class='ar'>"+a+"</div>"}
+function B(items){return "<ul>"+items.map(function(x){return "<li>"+L(x[0],x[1])+"</li>"}).join("")+"</ul>"}
+function T(w,a){return "<div class='tip'>💡 <b>"+w+"</b> = <span class='ar'>"+a+"</span></div>"}
+function H(t,a){return "<h4>"+t+" <span class='ar' style='display:inline'>"+a+"</span></h4>"}
+function TB(h,rows){return "<div class='tw'><table><tr>"+h.map(function(x){return "<th>"+x+"</th>"}).join("")+"</tr>"+rows.map(function(r){return "<tr>"+r.map(function(c){return "<td>"+c+"</td>"}).join("")+"</tr>"}).join("")+"</table></div>"}
+function TC(items){return "<div class='grid'>"+items.map(function(x){return "<div class='tc'><div class='tch' onclick='tg(this)'>"+x[0]+"</div><div class='tcb'>"+x[1]+"</div></div>"}).join("")+"</div>"}
+function CH(a){return "<div class='chips'>"+a.map(function(x){return "<span class='chip'>"+x+"</span>"}).join("")+"</div>"}
+function tg(e){e.parentNode.classList.toggle("open")}
+function allc(o){document.querySelectorAll(".card").forEach(function(c){c.classList.toggle("open",!!o)})}
+function tgAr(){var h=document.body.classList.toggle("hide-ar");$("tr").textContent=h?"Show Arabic / إظهار العربي":"Hide Arabic / إخفاء العربي"}
+/* ring */
+var RG=[];
+function RING(items,center){var id=RG.length;RG.push(items);var n=items.length,s="<svg viewBox='0 0 320 320' class='svg'><circle cx='160' cy='160' r='100' fill='none' stroke='#b7dfd8' stroke-width='3' stroke-dasharray='6 5'/><text x='160' y='156' text-anchor='middle' font-size='13' fill='#0f766e' font-weight='700'>"+center+"</text><text x='160' y='174' text-anchor='middle' font-size='18'>✂️</text>";
+items.forEach(function(it,i){var a=-Math.PI/2+i*2*Math.PI/n,x=Math.round(160+105*Math.cos(a)),y=Math.round(160+105*Math.sin(a));s+="<g class='nd' onclick='rg("+id+","+i+",this)'><circle cx='"+x+"' cy='"+y+"' r='40'/><text x='"+x+"' y='"+(y-3)+"'>"+it[0]+"</text><text x='"+x+"' y='"+(y+12)+"' font-size='15'>"+it[1]+"</text></g>"});
+return s+"</svg><div class='info' id='ri"+id+"'>👆 Tap a link / اضغط على حلقة</div>"}
+function rg(id,i,el){el.parentNode.querySelectorAll(".nd").forEach(function(n){n.classList.remove("sel")});el.classList.add("sel");$("ri"+id).innerHTML=RG[id][i][2]}
+/* stepper */
+var SP=[];
+function STEP(steps){var id=SP.length;SP.push({s:steps,i:0});return "<div class='step' id='sp"+id+"'></div><div class='nav'><button onclick='sp("+id+",-1)'>◀ Back</button><button onclick='sp("+id+",1)'>Next ▶</button></div>"}
+function sp(id,d){var o=SP[id];o.i=Math.max(0,Math.min(o.s.length-1,o.i+d));$("sp"+id).innerHTML="<div class='sn'>Step "+(o.i+1)+" / "+o.s.length+"</div><h4>"+o.s[o.i][0]+"</h4>"+o.s[o.i][1]}
+/* quiz */
+var Q=[
+["Asepsis is:","الأسيبسيس هو:",["Freedom from disease-causing microorganisms","Killing only spores","Invasion of the body by pathogens","Removal of soil only"],0],
+["Surgical asepsis equals:","الأسيبسيس الجراحي يساوي:",["Cleaning only","Medical asepsis + sterilization","Disinfection + hand washing","Standard precautions"],1],
+["Autoclave (moist heat) sterilization uses steam under pressure at:","التعقيم بالأوتوكلاف بيستخدم بخار تحت ضغط على درجة:",["80 °C","100 °C","121–123 °C","200 °C"],2],
+["Disinfection eliminates pathogens on inanimate objects EXCEPT:","التطهير بيقضي على الميكروبات على الأدوات ما عدا:",["Bacteria","Viruses","Fungi","Spores"],3],
+["Airborne droplet nuclei are __ and an example is __:","أنوية الرذاذ المحمولة هوائيًا حجمها __ ومثالها __:",["<5 µm – Tuberculosis","<5 µm – Herpes simplex","≥5 µm – COVID-19","≥5 µm – Measles"],0],
+["Infection caused by the patient's own normal flora is:","العدوى اللي سببها الفلورا الطبيعية للمريض:",["Exogenous","Endogenous","Systemic","Chronic"],1],
+["Which stage of infection is the MOST infectious?","أكتر مرحلة معدية في العدوى:",["Incubation","Convalescent","Prodromal","Full illness"],2],
+["Rabies reservoir is:","مخزن عدوى السعار (Rabies):",["Camel","Soil","Water","Dog"],3],
+["The minimum IC practices used for ALL patients at ALL times:","أقل ممارسات مكافحة عدوى لكل المرضى في كل الأوقات:",["Airborne precautions","Contact precautions","Standard precautions","Droplet precautions"],2],
+["For airborne precautions the nurse wears:","في احتياطات الهواء الممرضة بتلبس:",["Surgical mask only","N95 or P2 mask with fit check","Gloves only","No mask"],1]];
+var sc=0,done={};
+function QZ(){var h="";Q.forEach(function(q,i){h+="<div class='q'><div class='en'><b>"+(i+1)+". "+q[0]+"</b></div><div class='ar'>"+q[1]+"</div>";q[2].forEach(function(o,j){h+="<button class='opt' onclick='ans("+i+","+j+",this)'>"+o+"</button>"});h+="</div>"});return h+"<div class='score' id='score'></div><button class='btn' onclick='rs()'>🔄 Restart</button>"}
+function ans(i,j,el){if(done[i])return;done[i]=1;var c=Q[i][3];el.parentNode.querySelectorAll(".opt").forEach(function(b,k){b.disabled=true;if(k===c)b.classList.add("ok")});if(j===c){sc++}else{el.classList.add("no")}
+var n=Object.keys(done).length;$("score").textContent="Answered "+n+"/10 — Score: "+sc+"/10"+(n===10?(sc>=8?" 🌟 Excellent! ممتاز":sc>=5?" 👍 Good, review mistakes / كويس راجع الغلط":" 📖 Review again / راجع تاني"):"")}
+function rs(){sc=0;done={};$("qb").innerHTML=QZ()}
+/* content */
+var C=[];
+C.push(["📌 Objectives & Introduction","الأهداف والمقدمة",
+H("Objectives","الأهداف")+B([
+["Define key terms, <mark>purposes of medical asepsis</mark>, types of microorganisms and types of infection.","تعرّف المصطلحات، وأغراض الأسيبسيس الطبي، وأنواع الميكروبات والعدوى."],
+["Infection process, <mark>chain of infection</mark>, <mark>course of infection</mark>.","عملية العدوى، سلسلة العدوى، مراحل العدوى."],
+["Body defenses, factors increasing susceptibility, <mark>nosocomial infection</mark>.","دفاعات الجسم، عوامل زيادة القابلية للعدوى، العدوى المكتسبة من المستشفى."],
+["Standard precautions; <mark>BSIS</mark> (Body Substance Isolation System) to prevent blood-borne infection.","الاحتياطات القياسية ونظام عزل سوائل الجسم لمنع العدوى المنقولة بالدم."],
+["Nursing management of a patient with infection.","التمريض لمريض العدوى."]])+
+H("Introduction","مقدمة")+B([
+["<mark>Hospital-acquired infections</mark> are a common problem – prevalence about <mark>9%</mark>; they increase the cost of health care.","العدوى المكتسبة من المستشفى مشكلة شائعة، نسبتها حوالي 9% وبتزوّد تكلفة الرعاية."],
+["About <mark>two-thirds</mark> of developing countries spend more than <mark>50%</mark> of health budgets on hospitals.","حوالي ثلثين الدول النامية بتصرف أكتر من 50% من ميزانية الصحة على المستشفيات."],
+["Effective <mark>IC (infection control)</mark> programs decrease nosocomial spread, morbidity, mortality and costs.","برامج مكافحة العدوى الفعّالة بتقلل انتشار العدوى والمرض والوفيات والتكلفة."]])+
+H("Figure 1: Spread in health care","أشكال انتقال العدوى")+TC([
+["🧑‍⚕️➡️🛏️ HCW → Patient",L("Health care worker to patients.","من العامل الصحي للمريض.")],
+["🛏️➡️🧑‍⚕️ Patient → HCW",L("Patients to health care workers.","من المريض للعامل الصحي.")],
+["🛏️↔️🛏️ Patient ↔ Patient",L("Between patients (two-way arrow).","من مريض لمريض (في الاتجاهين).")],
+["🧑‍⚕️↔️🧑‍⚕️ HCW ↔ HCW",L("From one health care worker to another.","من عامل صحي لعامل صحي تاني.")]])+
+T("Morbidity / Mortality","نسبة المرض / نسبة الوفاة")+T("COVID-19 & HCWs","كورونا والعاملين الصحيين: \"I stayed at work for you\" – العامل بيفضل في الشغل عشان المريض")]);
+
+C.push(["🧼 Key terms: Asepsis, Cleaning, Disinfection, Sterilization","المصطلحات الأساسية",
+TC([
+["Infection",L("<mark>Invasion of the body by pathogens</mark> or microorganisms capable of producing disease.","دخول مسببات المرض أو ميكروبات قادرة تعمل مرض للجسم.")],
+["Nosocomial infection",L("Infections <mark>associated with delivery of health care services in a health care facility</mark>.","عدوى مرتبطة بتقديم الخدمة الصحية داخل منشأة صحية (عدوى المستشفى).")],
+["Asepsis",L("<mark>Freedom from disease-causing microorganisms</mark>. Two types: medical & surgical.","خلو المكان من الميكروبات المسببة للمرض. نوعين: طبي وجراحي.")],
+["Medical asepsis (Clean technique)",L("Procedures to <mark>reduce the number</mark> of microorganisms and <mark>prevent their spread</mark>. Includes <mark>standard precautions</mark> (e.g. hand washing) and <mark>transmission-based precautions</mark>. The nurse uses it to <mark>break the infection chain</mark>.","طريقة نضيفة تقلل عدد الميكروبات وتمنع انتشارها، وتشمل الاحتياطات القياسية (زي غسل الإيدين) واحتياطات الانتقال. الممرضة بتستخدمها عشان تكسر سلسلة العدوى.")],
+["Surgical asepsis (Sterile technique)",L("Procedures that <mark>eliminate</mark> microorganisms from an area. <mark>Surgical asepsis = medical asepsis + sterilization</mark>.","إجراءات بتقضي على الميكروبات من المكان. الجراحي = الطبي + التعقيم.")]])+
+H("Cleaning vs Disinfection vs Sterilization","المقارنة")+TB(["","What it does","Spores?"],[
+["<b>Cleaning</b>","Removes foreign material (soil & organic material) from objects; <mark>inhibits growth</mark> of microorganisms.","Not killed / مش بيقتلها"],
+["<b>Disinfection</b>","Eliminates <mark>pathogenic organisms</mark> on inanimate objects.","<mark>Except spores</mark> / ما عدا الجراثيم"],
+["<b>Sterilization</b>","Destroys <mark>ALL</mark> microorganisms.","<mark>Including spores & viruses</mark> / بيقتلها"]])+
+T("Spores","جراثيم مقاومة (شكل ساكن للبكتيريا بيتحمل الحرارة والمطهرات)")+T("Inanimate object","جماد، أداة مش كائن حي")+
+H("4 Sterilization methods","طرق التعقيم الأربعة")+TC([
+["1️⃣ Moist heat (Autoclave)",L("Steam under pressure at <mark>121 to 123 °C</mark> for <mark>29 min</mark> (as on the slide).","بخار تحت ضغط على 121–123 درجة لمدة 29 دقيقة (زي السلايد).")+L("Indicator tape stripes change color <b>before → after</b> = sterilized.","شريط المؤشر بيتغير لونه بعد التعقيم.")],
+["2️⃣ Gas",L("<mark>Ethylene oxide</mark> gas.","غاز إيثيلين أوكسيد.")],
+["3️⃣ Boiling water",L("Water temperature rises <mark>no higher than 100 °C</mark> for <mark>15 min</mark>.","الماء المغلي مش بيعدي 100 درجة، لمدة 15 دقيقة.")],
+["4️⃣ Radiation",L("Both <mark>ionizing</mark> and <mark>non-ionizing</mark> radiation; e.g. <mark>ultraviolet light</mark> is non-ionizing.","إشعاع مؤين وغير مؤين، زي الأشعة فوق البنفسجية (غير مؤين).")]])]);
+
+C.push(["🔬 Microorganisms & Types of Infection","الميكروبات وأنواع العدوى",
+H("Microorganisms causing infection","الميكروبات المسببة للعدوى")+CH(["🦠 Bacteria","🧬 Viruses","🍄 Fungi","🪱 Parasites"])+
+TB(["Pair","Definition"],[
+["<mark>Local</mark> vs <mark>Systemic</mark>","Local = limited to the specific part where the microorganism remains. If microorganisms spread and damage different parts of the body = <mark>systemic</mark>.<div class='ar'>موضعية: في مكان واحد. جهازية: انتشرت في الجسم.</div>"],
+["<mark>Acute</mark> vs <mark>Chronic</mark>","Acute = appears suddenly / lasts a short time. Chronic = occurs slowly over a long period, may last <mark>months or years</mark>.<div class='ar'>حادة: فجأة ومدتها قصيرة. مزمنة: بطيئة وممكن تستمر شهور أو سنين.</div>"],
+["<mark>Endogenous</mark>","Caused by organisms present as part of the <mark>normal flora of the patient</mark>.<div class='ar'>من ميكروبات المريض الطبيعية في جسمه.</div>"],
+["<mark>Exogenous</mark>","Caused by organisms acquired by exposure to <mark>hospital personnel, medical devices or hospital environment</mark>.<div class='ar'>من ميكروبات جاية من العاملين أو الأجهزة أو بيئة المستشفى.</div>"]])+
+T("Normal flora","البكتيريا الطبيعية اللي عايشة في جسمك")]);
+
+C.push(["⛓️ Chain of Infection","سلسلة العدوى",
+L("Infection needs <mark>6 links</mark>. <mark>Break any link</mark> and the infection stops.","العدوى محتاجة 6 حلقات، لو كسرت أي حلقة العدوى بتقف.")+
+RING([
+["Agent","🦠",L("<b>Infectious agent</b>: bacteria, virus, fungi, protozoa, parasite.","العامل المعدي: بكتيريا، فيروس، فطريات، أوليات، طفيليات.")],
+["Reservoir","🏠",L("<b>Reservoir</b>: people, equipment, water.","المخزن: ناس، معدات، مياه.")],
+["Exit","🚪",L("<b>Portal of exit</b>: excretions, secretions, droplets.","مخرج الميكروب: إفرازات، فضلات، رذاذ.")],
+["Transmit","🔀",L("<b>Mode of transmission</b>: contact, droplet, airborne, vector-borne.","طريقة الانتقال: تلامس، رذاذ، هواء، ناقل حي.")],
+["Entry","🚧",L("<b>Portal of entry</b>: respiratory tract, GI tract, mucous membrane, skin.","مدخل الميكروب: تنفسي، هضمي، أغشية مخاطية، جلد.")],
+["Host","🧍",L("<b>Susceptible host</b>: people with chronic disease, immunocompromised, very young, elderly.","العائل القابل للإصابة: أمراض مزمنة، مناعة ضعيفة، أطفال صغيرين، كبار السن.")]],"Break the chain")+
+H("Details of each link","تفاصيل الحلقات")+TC([
+["Reservoir",L("The <mark>habitat where the agent normally lives, grows and multiplies</mark>.","المكان اللي الميكروب بيعيش فيه ويتكاثر.")+B([
+["<mark>Human</mark>: syphilis, TB, HIV, HBV – may be <mark>symptomatic</mark> or <mark>carrier</mark>.","الإنسان (مريض أو حامل للعدوى)."],
+["<mark>Animals</mark>: Rabies – dog; MERS – camels.","حيوانات: السعار من الكلب، ميرس من الجمال."],
+["<mark>Food</mark>: Cl. botulinum.","أكل."],
+["<mark>Environment</mark>: soil (gas gangrene, tetanus), water.","البيئة: التربة (غرغرينا غازية، تيتانوس) والمياه."]])],
+["Coronaviruses (figure)",L("<mark>Bats</mark> → SARS-CoV (animal), MERS-CoV (<mark>camel</mark>), COVID-19 (source unknown ?) → human → <mark>community</mark> or <mark>nosocomial</mark> transmission.","الخفافيش ← سارس / ميرس (جمل) / كوفيد-19 (المصدر مش معروف) ← الإنسان ← انتقال مجتمعي أو داخل المستشفى.")],
+["Portal of exit",L("The path by which a pathogen leaves its host.","الطريق اللي الميكروب بيخرج منه.")+B([
+["Influenza & <i>M. tuberculosis</i> → respiratory tract.","إنفلونزا والسل ← الجهاز التنفسي."],
+["Schistosomes → urine.","البلهارسيا ← البول."],
+["Hepatitis B → cuts or needles in the skin; malaria → blood-sucking arthropods.","التهاب كبدي B ← جروح أو إبر؛ الملاريا ← حشرات ماصة للدم."]])],
+["Hepatitis B chain (Fig. 2)",L("Reservoir: chronic <mark>HBV carrier</mark> → Exit: <mark>blood</mark> → Transmission: used needles or surgical instruments → Entry: cut by <mark>sharps</mark> → Host: <mark>unvaccinated</mark> health care worker.","المخزن: حامل مزمن ← الخروج: الدم ← الانتقال: إبر أو أدوات جراحة مستعملة ← الدخول: جرح بأداة حادة ← العائل: عامل صحي غير مطعّم.")]])]);
+
+C.push(["🚦 Modes of Transmission","طرق انتقال العدوى",
+TB(["Mode","How","Examples"],[
+["🤝 <b>Contact</b><br>Direct","Direct body contact<div class='ar'>تلامس مباشر</div>","Staphylococcus, <mark>Herpes simplex</mark> (HSV-1: kissing / premasticated food)"],
+["🤝 <b>Contact</b><br>Indirect","Via contaminated intermediate object or person<div class='ar'>عن طريق شيء أو شخص ملوث</div>","<mark>Measles virus, HBV</mark>"],
+["💦 <b>Droplet</b>","Respiratory droplets travel directly to susceptible <mark>mucosal surfaces</mark>, over <mark>short distances</mark>; from cough, sneeze, talk, suctioning, intubation, cough induction<div class='ar'>رذاذ تنفسي لمسافات قصيرة</div>","<mark>COVID-19</mark>"],
+["🌬️ <b>Airborne</b>","<mark>Droplet nuclei &lt;5 µm</mark> remain in the air over time and distance<div class='ar'>أنوية رذاذ بتفضل في الهواء مدة ومسافة</div>","<mark>M. tuberculosis</mark>"],
+["🚰 <b>Vehicle</b>","Contaminated items, water, drugs/solutions, blood, food (improperly handled, stored or cooked; fresh or thawed meats)<div class='ar'>أدوات، مياه، أدوية، دم، أكل ملوث</div>","—"],
+["🦟 <b>Vector</b>","Insects, fleas, ticks, animals<div class='ar'>حشرات وحيوانات ناقلة</div>","Mosquitoes (<i>falciparum</i>); fleas/ticks (<i>Rickettsia typhi, R. prowazekii</i>); cows/dogs (<i>Brucella</i>)"]])+
+H("Classification tree","شجرة التصنيف")+TC([
+["Direct",L("Direct contact + Droplet spread.","تلامس مباشر + رذاذ.")],
+["Indirect",L("Airborne + Vehicle-borne + Vector-borne (mechanical or biological).","هوائي + عن طريق وسيط + ناقل حي (ميكانيكي أو بيولوجي).")]])+
+T("Vector","كائن حي (حشرة) بينقل الميكروب")+T("Droplet vs Airborne","الرذاذ مسافة قصيرة، الهوائي يفضل معلّق ويقطع مسافات")]);
+
+C.push(["⏱️ Course of Infection","مراحل العدوى",
+STEP([
+["1- Incubation period",L("Interval between <mark>invasion of the body by the pathogen</mark> and the <mark>first symptoms</mark>.","الفترة بين دخول الميكروب وأول أعراض.")+L("Chickenpox <mark>2–3 weeks</mark>, common cold <mark>1–2 days</mark>, tetanus <mark>2 to 21 days</mark>.","جدري الماء 2–3 أسابيع، البرد 1–2 يوم، التيتانوس 2–21 يوم.")],
+["2- Prodromal stage",L("<mark>Most infectious</mark> stage. Starts from <mark>nonspecific signs</mark> (malaise, low-grade fever, fatigue) to more specific symptoms. Microorganisms grow and multiply; client is more capable of spreading disease.","أكتر مرحلة معدية. بتبدأ بأعراض عامة (تعب، حرارة بسيطة، إرهاق) وبعدين أعراض أوضح.")],
+["3- Full stage of illness",L("Specific signs and symptoms of the infection appear. <i>(textbook note)</i>","بتظهر الأعراض المميزة للمرض. (إضافة من الكتاب)")],
+["4- Convalescent period",L("Recovery: symptoms disappear and the patient returns to health. <i>(textbook note)</i>","مرحلة التعافي. (إضافة من الكتاب)")]])+T("Malaise","إحساس عام بالتعب")]);
+
+C.push(["🛡️ Defenses, Susceptibility & Nosocomial Sites","الدفاعات والقابلية للعدوى",
+H("Body defenses against infection","دفاعات الجسم")+CH(["Skin","Mouth","Respiratory tract","Urinary tract","Gastrointestinal tract","Vagina","Immune system"])+
+H("Factors increasing susceptibility","عوامل زيادة القابلية")+TB(["Group","Factors"],[
+["1. <b>Intrinsic host</b>","<mark>Age</mark>, poor nutritional status, co-morbidity, severity of underlying disease, fatigue, stress<div class='ar'>العمر، سوء التغذية، أمراض مصاحبة، شدة المرض الأساسي، إرهاق، توتر</div>"],
+["2. <b>Environmental</b>","Hospital location, diagnostic procedures, immunosuppressive drugs, chemotherapy, antibiotics, medical & surgical devices, exposure to infected patients/workers, <mark>asymptomatic carriers</mark><div class='ar'>مكان المستشفى، فحوصات، أدوية مثبطة للمناعة، كيماوي، مضادات حيوية وأجهزة، التعرض لمصابين، حاملين بدون أعراض</div>"],
+["3. <b>Agent</b>","Varieties of organisms, institutional and human factors, reservoirs & their <mark>virulence</mark><div class='ar'>أنواع الميكروبات، عوامل المؤسسة والبشر، المخازن وشراسة الميكروب</div>"]])+
+H("Most common sites for nosocomial infection","أكتر أماكن عدوى المستشفى")+TC([
+["✂️ Surgical incisions",L("Surgical wounds.","جروح العمليات.")],
+["🚽 Urinary tract",L("<mark>Catheter-related</mark>.","مرتبطة بالقسطرة البولية.")],
+["🫁 Lower respiratory tract",L("Lower airways / chest.","الجهاز التنفسي السفلي.")],
+["🩸 Bloodstream",L("<mark>Catheter-related</mark>.","مجرى الدم، مرتبطة بالكانيولا/القسطرة.")]])+T("Susceptibility","قابلية الإصابة"),]);
+
+C.push(["🧤 Standard Precautions","الاحتياطات القياسية",
+L("<mark>Standard precautions</mark> = work practices for a <mark>basic level</mark> of infection prevention and control; the <mark>minimum</mark> practices used <mark>at all times, for all patients, in all situations</mark>.","الاحتياطات القياسية هي الحد الأدنى لمكافحة العدوى، بتتطبق دايمًا على كل المرضى وفي كل المواقف.")+
+H("Levels of IC","مستويات المكافحة")+CH(["1 Standard precautions","2 Transmission-based","3 Immunization","4 Education & training of staff"])+
+H("Components (tap)","المكونات")+TC([
+["1- Hand hygiene",L("Your <mark>5 moments</mark> (see steps below).","5 لحظات لغسل الإيدين (الخطوات تحت).")],
+["2- PPE",L("<mark>Gloves</mark>, <mark>gowns or plastic aprons</mark>, <mark>mask</mark>, eye protection / face shield.","جوانتي، جاون أو مريلة بلاستيك، ماسك، حماية للعين.")],
+["3- Respiratory hygiene",L("At first point of contact with a potentially infected person: display graphics to <mark>cover nose & mouth with tissue or bent elbow</mark>; hand hygiene after contact with secretions; give suspected COVID-19 patients a <mark>medical mask</mark>.","غطّي الأنف والفم بمنديل أو بالكوع المثني، اغسل إيدك بعد الإفرازات، واديّ مريض كوفيد المشتبه ماسك طبي.")],
+["4- Patient placement",L("Assign patient with infectious disease to an <mark>individual OR</mark> or <mark>last on the surgical list</mark>.","المريض المعدي يتعمله عملية في أوضة لوحده أو آخر العمليات.")],
+["5- Equipment",L("Properly handle, clean and disinfect patient care equipment and instruments/devices.","تعامل ونظف وطهر الأدوات صح.")],
+["6- Environment",L("Clean all rooms on a regular schedule; clean soiled equipment/furniture <mark>immediately</mark>; wear gloves.","نظف الأوض بانتظام وأي حاجة اتبلت بسوائل الجسم فورًا، والبس جوانتي.")],
+["7- Textiles & laundry",L("Bag soiled trash & linen securely; discard per facility policy; wear gloves & protective garments.","حط الملايات والزبالة الملوثة في أكياس مقفولة وتخلص منها حسب سياسة المكان.")],
+["8- Injection safety",L("Safe injection does not harm the recipient, exposes the provider to no avoidable risk, and creates no dangerous waste. <mark>Most important: avoid percutaneous injury</mark>.","الحقنة الآمنة ما تضرش المريض ولا مقدم الخدمة. الأهم تجنب الوخز بالإبرة.")]])+
+H("Hand hygiene – 5 moments","5 لحظات غسل الإيدين")+STEP([
+["Moment 1",L("<mark>Before patient contact</mark>","قبل لمس المريض")],
+["Moment 2",L("<mark>Before a clean / aseptic procedure</mark>","قبل أي إجراء نضيف أو معقم")],
+["Moment 3",L("<mark>After body fluid exposure risk</mark>","بعد التعرض لسوائل الجسم")],
+["Moment 4",L("<mark>After patient contact</mark>","بعد لمس المريض")],
+["Moment 5",L("<mark>After contact with patient surroundings</mark>","بعد لمس محيط المريض")]])+
+T("PPE","معدات الوقاية الشخصية")+T("Percutaneous","عن طريق الجلد، زي وخزة إبرة")]);
+
+C.push(["🚪 Transmission-Based Precautions","احتياطات الانتقال",
+L("The <mark>second tier</mark> of basic IC, used <mark>in addition to standard precautions</mark> for patients who <mark>may be infected or colonized</mark> with certain agents.","المستوى التاني، بتتضاف على الاحتياطات القياسية للمرضى المشتبه أو المحمّلين بميكروبات معينة.")+
+TB(["Type","Before entering room","On leaving room"],[
+["🟠 <b>Contact</b>","1 Hand hygiene<br>2 Gown or apron<br>3 Gloves","1 Dispose of gloves<br>2 Hand hygiene<br>3 Dispose of gown/apron<br>4 Hand hygiene"],
+["🟢 <b>Droplet</b>","1 Hand hygiene<br>2 <mark>Surgical mask</mark>","1 Dispose of mask<br>2 Hand hygiene"],
+["🔵 <b>Airborne</b>","1 Hand hygiene<br>2 <mark>N95 or P2 mask</mark><br>3 <mark>Fit check</mark> of the mask<br><b>Keep door closed at all times</b>","1 Dispose of mask<br>2 Hand hygiene"]])+
+T("Colonized","الميكروب موجود على الجسم من غير مرض")+T("Fit check","اختبار إن الماسك محكم على الوش")+
+H("COVID-19 contact & droplet PPE (WHO) – order","ترتيب لبس الـPPE")+STEP([
+["1 Hand hygiene",L("Alcohol-based handrub: <mark>20–30 seconds</mark>. Soap & water: <mark>40–60 seconds</mark>.","كحول 20–30 ثانية، ماية وصابون 40–60 ثانية.")],
+["2 Put on the gown",L("Gown first.","الجاون الأول.")],
+["3 Put on the mask",L("<mark>Medical mask</mark> or respirator (N95, FFP2, FFP3). Respirator only for <mark>aerosol-generating procedures</mark>.","ماسك طبي أو N95/FFP2/FFP3، والريسبيراتور بس مع الإجراءات اللي بتطلّع هباء.")],
+["4 Eye protection",L("Face shield or goggles.","واقي وش أو نضارة.")],
+["5 Put on gloves",L("Gloves placed <mark>over the cuff of the gown</mark>.","الجوانتي فوق كم الجاون.")]])+
+H("Contact + Droplet + Airborne","لو الثلاثة مع بعض")+L("Outside room: hand hygiene → gown → N95/P2 mask (fit check) → eyewear or face shield → hand hygiene → gloves.","برا الأوضة: غسل إيدين ← جاون ← N95 (مع fit check) ← نضارة أو واقي ← غسل إيدين ← جوانتي.")]);
+
+C.push(["🩺 Nursing Management","التمريض لمريض العدوى",
+L("<mark>Assessment</mark> (history, physical exam, laboratory) → <mark>Nursing diagnosis</mark> → <mark>Nursing interventions</mark>.","التقييم ← التشخيص التمريضي ← التدخلات.")+
+TC([
+["📋 Nursing history",L("(a) <mark>Risk</mark>: existing disease process, history of recurrent infections, current medications/therapy, emotional stressors, nutritional status, immunization history. (b) Complaints suggesting infection.","عوامل الخطورة: المرض الحالي، عدوى متكررة، أدوية، توتر نفسي، تغذية، تطعيمات. وشكاوى توحي بعدوى.")],
+["🖐️ Physical assessment",L("Signs vary by body area: localized <mark>swelling, redness</mark>, pain/tenderness, palpable <mark>heat</mark>, loss of function, <mark>fever</mark>, ↑ pulse & respiratory rate, malaise, anorexia, nausea/vomiting, enlarged tender lymph nodes draining the area.","ورم واحمرار وألم وسخونة وفقدان وظيفة وحمى وزيادة النبض والتنفس وتعب وفقدان شهية وغثيان وتضخم الغدد الليمفاوية.")],
+["🧪 Laboratory data",L("<mark>Leukocyte count 4,500–11,000/ml is normal</mark>; <mark>elevated ESR</mark>; urine, blood, sputum or drainage cultures show pathogens.","كرات الدم البيضاء الطبيعي 4,500–11,000، وسرعة الترسيب ESR بتزيد، والمزارع بتظهر الميكروب.")],
+["🎯 Nursing diagnosis & goal",L("Diagnosis: <mark>Risk of infection</mark>. Goal: patient remains free of infection, shown by <mark>normal vital signs</mark> and <mark>no signs/symptoms</mark> of infection.","التشخيص: خطر العدوى. الهدف: المريض يفضل خالي من العدوى وعلاماته الحيوية طبيعية.")]])+
+H("Interventions that break the chain","التدخلات اللي بتكسر السلسلة")+TB(["Link","Nursing intervention"],[
+["Infectious agent","Ensure articles are cleaned, disinfected or sterilized before use; educate client/support persons about methods."],
+["Reservoir","Change soiled/wet dressings; assist skin & oral hygiene; dispose of soiled linen, feces & urine properly; cover or cap fluid containers; empty suction/drainage bottles each shift or when full."],
+["Portal of exit","Avoid talking, coughing, sneezing over open wounds or sterile fields; cover mouth & nose."],
+["Transmission","Wash hands (5 moments); gloves for secretions; gowns if soiling is possible; moisture-proof refuse bags; hold bedpans steady; masks & eye protection for droplet infections or body-fluid sprays."],
+["Portal of entry","Sterile technique for injections, catheterization, open wounds/dressings; used needles & syringes in <mark>puncture-resistant containers</mark>."],
+["Susceptible host","Own personal care items; maintain skin & mucous membrane integrity; balanced diet; educate about <mark>immunizations</mark>."]])]);
+
+C.push(["🔢 Numbers to remember","أرقام مهمة",
+TC([
+["9%",L("Prevalence of hospital-acquired infections.","نسبة العدوى المكتسبة من المستشفى.")],
+["⅔ & 50%",L("Two-thirds of developing countries spend more than 50% of health budgets on hospitals.","ثلثين الدول النامية بتصرف أكتر من 50% من الميزانية على المستشفيات.")],
+["121–123 °C",L("Autoclave steam temperature.","حرارة الأوتوكلاف.")],
+["29 min",L("Autoclave time (as on slide).","مدة الأوتوكلاف (حسب السلايد).")],
+["100 °C / 15 min",L("Boiling water sterilization.","التعقيم بالغلي.")],
+["< 5 µm",L("Size of airborne droplet nuclei.","حجم أنوية الرذاذ الهوائي.")],
+["2–3 weeks",L("Incubation of chickenpox.","حضانة الجدري المائي.")],
+["1–2 days",L("Incubation of common cold.","حضانة البرد.")],
+["2–21 days",L("Incubation of tetanus.","حضانة التيتانوس.")],
+["4,500–11,000",L("Normal leukocyte (WBC) count.","الطبيعي لكرات الدم البيضاء.")],
+["5 moments",L("Hand hygiene moments.","لحظات غسل الإيدين.")],
+["6 links",L("Chain of infection links.","حلقات سلسلة العدوى.")],
+["20–30 s",L("Alcohol handrub time.","مدة فرك الكحول.")],
+["40–60 s",L("Soap & water hand washing time.","مدة الغسل بالماية والصابون.")],
+["3 types",L("Transmission-based precautions: contact, droplet, airborne.","احتياطات الانتقال التلاتة.")],
+["5 modes",L("Contact, droplet, airborne, vehicle, vector.","5 طرق انتقال.")]])]);
+
+C.push(["📝 Quiz (10 questions)","كويز",
+"<div id='qb'>"+QZ()+"</div>"]);
+
+$("app").innerHTML=C.map(function(c){return "<section class='card'><div class='ch' onclick='tg(this)'><span>"+c[0]+"<small class='ar'>"+c[1]+"</small></span><i>▾</i></div><div class='cb'>"+c[2]+"</div></section>"}).join("");
+SP.forEach(function(o,k){sp(k,0)});
+</script>
+</body>
+</html>

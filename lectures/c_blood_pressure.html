@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Measuring Blood Pressure</title>
+<style>
+:root{--p:#0f766e;--p2:#14b8a6;--pl:#ecfdf5;--pl2:#d1fae5;--tx:#134e4a;--gr:#6b7280;--bd:#c7e8e1}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:#fff;color:#1f2937;line-height:1.65;font-size:16px}
+.wrap{max-width:860px;margin:auto;padding:10px 12px 60px}
+header{position:sticky;top:0;background:#fff;z-index:10;border-bottom:2px solid var(--pl2);padding:10px 12px}
+header h1{margin:0;font-size:1.15em;color:var(--p)}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{background:var(--p);color:#fff;border:0;border-radius:10px;padding:9px 13px;font-size:.92em;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--p);border:1px solid var(--p)}
+.btn:active{transform:scale(.97)}
+mark{background:#fde68a;padding:0 3px;border-radius:3px}
+.ar{direction:rtl;text-align:right;color:var(--gr);font-size:.86em;margin:2px 0 10px}
+.hide-ar .ar{display:none}
+.en{margin:6px 0 0}
+.card{border:1px solid var(--bd);border-radius:14px;margin:10px 0;overflow:hidden;background:#fff}
+.head{width:100%;display:flex;align-items:center;gap:10px;background:var(--pl);border:0;padding:14px;font-size:1.02em;font-weight:700;color:var(--tx);text-align:left;cursor:pointer}
+.head .ico{font-size:1.5em}
+.head .t{flex:1}
+.head small{display:block;font-weight:400;color:var(--gr);direction:rtl;text-align:left;font-size:.8em}
+.chev{transition:transform .2s}
+.card.open .chev{transform:rotate(180deg)}
+.body{display:none;padding:14px}
+.card.open .body{display:block}
+.term{background:#f0fdfa;border-left:4px solid var(--p2);padding:8px 10px;border-radius:8px;margin:8px 0;font-size:.93em}
+.term .ar{margin:2px 0 0}
+.extra{background:#f9fafb;border:1px dashed #cbd5e1;padding:8px 10px;border-radius:8px;margin:8px 0;font-size:.9em;color:#475569}
+.why{background:#fffbeb;border-left:4px solid #f59e0b;padding:6px 10px;border-radius:8px;margin:6px 0;font-size:.88em}
+.why .ar{margin:0}
+h3{color:var(--p);margin:16px 0 4px;font-size:1.02em}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.93em}
+th,td{border:1px solid var(--bd);padding:7px 8px;text-align:center}
+th{background:var(--pl2);color:var(--tx)}
+td.l{text-align:left}
+.r1{background:#ecfdf5}.r2{background:#fefce8}.r3{background:#fff7ed}.r4{background:#fef2f2}
+.step{display:flex;gap:10px;margin:10px 0;padding:8px;border:1px solid var(--pl2);border-radius:10px}
+.step .n{background:var(--p);color:#fff;min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em}
+.step .c{flex:1}
+.calc{background:var(--pl);border-radius:12px;padding:12px;margin:10px 0}
+.calc input{width:80px;padding:8px;border:1px solid var(--p2);border-radius:8px;font-size:1em;margin:4px 6px 4px 0}
+.calc .out{margin-top:6px;font-weight:700;color:var(--tx)}
+.hbox{text-align:center;background:var(--pl);border-radius:14px;padding:12px;margin:10px 0}
+.heart{font-size:84px;display:inline-block;transition:transform .5s}
+.heart.sys{transform:scale(.82)}
+.heart.dia{transform:scale(1.12)}
+.artery{height:40px;border-radius:20px;background:#fecaca;margin:8px auto;width:80%;display:flex;align-items:center;justify-content:center;transition:height .5s;font-size:1.3em;letter-spacing:4px;color:#b91c1c}
+.artery.sys{height:70px}
+.artery.dia{height:34px}
+.big{font-size:1.5em;font-weight:800;color:var(--p)}
+.sim{background:#fff;border:2px solid var(--pl2);border-radius:14px;padding:12px;margin:12px 0}
+.simrow{display:flex;align-items:center;gap:14px;justify-content:space-around;flex-wrap:wrap}
+.mer{width:34px;height:190px;border:2px solid var(--p);border-radius:8px;position:relative;overflow:hidden;background:#f8fafc}
+.merfill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#0f766e,#5eead4);height:0%;transition:height .08s}
+.pv{font-size:2.2em;font-weight:800;color:var(--p);text-align:center}
+.unit{text-align:center;color:var(--gr);font-size:.8em}
+.tubewrap{flex:1;min-width:150px;text-align:center}
+.tube{margin:auto;width:100%;border-radius:20px;transition:height .15s,background .15s}
+.tube.closed{height:6px;background:#9ca3af}
+.tube.open{height:44px;background:#fca5a5}
+.tube.tap{background:#f87171;animation:thump .55s infinite}
+@keyframes thump{0%,100%{height:6px}50%{height:40px}}
+.tlabel{font-size:.8em;color:var(--gr);margin-top:4px}
+.status{margin:10px 0;padding:8px;background:var(--pl);border-radius:8px;font-weight:600;color:var(--tx);text-align:center}
+.btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.read{margin-top:8px;text-align:center;font-weight:800;color:var(--p)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{background:var(--pl);border:1px solid var(--p2);border-radius:20px;padding:7px 12px;cursor:pointer;font-size:.9em;color:var(--tx)}
+.chip.on{background:var(--p);color:#fff}
+.pdet{background:#f0fdfa;border-radius:10px;padding:10px;min-height:60px}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.ncard{border:2px solid var(--p2);border-radius:12px;padding:10px;text-align:center;cursor:pointer;background:var(--pl);min-height:100px}
+.ncard .nn{font-size:1.35em;font-weight:800;color:var(--p)}
+.ncard .nl{font-size:.78em;color:var(--gr)}
+.ncard .nm{display:none;margin-top:6px;font-size:.85em;color:#1f2937;border-top:1px dashed var(--p2);padding-top:6px}
+.ncard.on{background:#fff}
+.ncard.on .nm{display:block}
+.q{border:1px solid var(--bd);border-radius:12px;padding:10px;margin:12px 0}
+.opt{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px;margin:6px 0;font-size:.95em;cursor:pointer;color:#1f2937}
+.opt.ok{background:#bbf7d0;border-color:#16a34a}
+.opt.bad{background:#fecaca;border-color:#dc2626}
+.fb{margin-top:6px;font-size:.9em}
+#res{background:var(--pl2);border-radius:12px;padding:12px;margin:10px 0;font-weight:700;text-align:center;display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>🩺 Measuring Blood Pressure <span style="font-weight:400;color:#6b7280;font-size:.8em">| قياس ضغط الدم</span></h1>
+  <div class="hbtns">
+    <button class="btn" id="arbtn" onclick="toggleAr()">🙈 Hide Arabic / اخفي العربي</button>
+    <button class="btn ghost" onclick="allCards(true)">📖 Open all</button>
+    <button class="btn ghost" onclick="allCards(false)">📕 Close all</button>
+  </div>
+</header>
+<div class="wrap">
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">📌</span><span class="t">1. Definition &amp; Outline<small class="ar">التعريف وخريطة المحاضرة</small></span><span class="chev">▾</span></button>
+<div class="body">
+<p class="en"><mark>Blood pressure</mark> is the <mark>force or amount of pressure</mark> exerted by blood against the <mark>walls of arteries</mark> when the <mark>left ventricle contracts</mark>.</p>
+<p class="ar">ضغط الدم هو القوة اللي الدم بيضغط بيها على جدران الشرايين وقت ما البطين الشمال بينقبض.</p>
+<div class="term"><b>Artery</b> = شريان (بيوصّل الدم من القلب للجسم) • <b>Ventricle</b> = بطين (الحجرة السفلية في القلب اللي بتضخ الدم) • <b>Contract</b> = ينقبض</div>
+<p class="en">The reading is recorded as a fraction: <mark>systolic / diastolic mmHg</mark>.</p>
+<p class="ar">القراءة بتتسجل ككسر: الانقباضي فوق / الانبساطي تحت، بوحدة مللي زئبق (mmHg).</p>
+<h3>🗺️ Outline of the lecture</h3>
+<p class="en">1) Definition 2) Normal range 3) Abnormalities 4) Factors affecting BP 5) Procedure (Purpose + Demonstration)</p>
+<p class="ar">١) التعريف ٢) المعدل الطبيعي ٣) الاضطرابات ٤) العوامل المؤثرة ٥) الإجراء (الغرض + التطبيق العملي)</p>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">❤️</span><span class="t">2. Systolic vs Diastolic<small class="ar">الانقباضي والانبساطي (فيه أنيميشن)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<h3>🔺 Systolic blood pressure</h3>
+<p class="en">When the ventricle <mark>contracts</mark>, the pressure in the arteries is at its <mark>highest point</mark> → this gives the <mark>upper</mark> reading. It is the <mark>greatest</mark> amount of pressure exerted by blood against the artery wall during <mark>maximum ventricular contraction</mark>.</p>
+<p class="ar">لما البطين بينقبض الضغط في الشرايين بيبقى أعلى حاجة، وده الرقم اللي فوق. هو أكبر ضغط بيحصل على جدار الشريان وقت أقصى انقباض للبطين.</p>
+<h3>🔻 Diastolic blood pressure</h3>
+<p class="en">When the ventricle <mark>relaxes</mark>, the pressure is at its <mark>lowest point</mark> → the <mark>lower</mark> reading. It is the <mark>lowest</mark> pressure against the artery walls during relaxation of the ventricle <mark>just before a new ventricular contraction</mark>.</p>
+<p class="ar">لما البطين بيرتخي الضغط بيبقى أقل حاجة، وده الرقم اللي تحت. هو أقل ضغط على جدار الشريان وقت ارتخاء البطين قبل الانقباضة الجاية على طول.</p>
+<p class="en"><mark>Systole</mark> occurs during contraction and <mark>emptying</mark> of the heart. <mark>Diastole</mark> occurs during relaxation and <mark>filling</mark> of the heart.</p>
+<p class="ar">السيستول = القلب بينقبض ويفضّي الدم. الدايستول = القلب بيرتخي ويتملي دم.</p>
+<div class="hbox">
+  <div id="heart" class="heart dia">❤️</div>
+  <div id="artery" class="artery dia">→ → →</div>
+  <div class="big" id="hlabel">Diastole: relaxes &amp; fills — 80</div>
+  <div class="ar" id="harlabel" style="text-align:center">القلب بيرتخي ويتملي، الضغط أقل حاجة</div>
+  <div class="btns" style="margin-top:8px">
+    <button class="btn" onclick="setHeart('s')">Systole 🔺</button>
+    <button class="btn" onclick="setHeart('d')">Diastole 🔻</button>
+    <button class="btn ghost" id="hauto" onclick="autoHeart()">▶ Auto beat</button>
+  </div>
+</div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">📏</span><span class="t">3. Normal range &amp; Pulse pressure<small class="ar">المعدل الطبيعي وضغط النبض</small></span><span class="chev">▾</span></button>
+<div class="body">
+<h3>Normal range of blood pressure</h3>
+<p class="en">Lower than <mark>120 mmHg</mark> for systole and lower than <mark>80 mmHg</mark> for diastole.</p>
+<p class="ar">الطبيعي: الانقباضي أقل من 120 والانبساطي أقل من 80 مللي زئبق.</p>
+<h3>Pulse pressure</h3>
+<p class="en">Is the <mark>difference between systolic and diastolic</mark> blood pressure. Pulse pressure = <mark>volume of pulse beat</mark>. Normally from <mark>30–50 mmHg</mark>.</p>
+<p class="ar">ضغط النبض = الفرق بين الانقباضي والانبساطي. بيعبّر عن حجم النبضة. الطبيعي من 30 لـ 50 مللي زئبق.</p>
+<div class="calc">
+  <b>🧮 Try it / جرّب:</b><br>
+  Systolic <input id="ps" type="number" value="120" oninput="calcPP()"> Diastolic <input id="pd" type="number" value="80" oninput="calcPP()">
+  <div class="out" id="ppout"></div>
+</div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">📊</span><span class="t">4. Classification of Hypertension<small class="ar">تصنيف الضغط العالي (جداول)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<h3>Table 1 — Classification (BP in mmHg)</h3>
+<table>
+<tr><th>Classification</th><th>Systolic</th><th>Diastolic</th></tr>
+<tr class="r1"><td class="l"><b>Normal</b></td><td><mark>119 or lower</mark></td><td><mark>79 or lower</mark></td></tr>
+<tr class="r2"><td class="l"><b>Prehypertension</b></td><td><mark>120 to 139</mark></td><td><mark>80 to 89</mark></td></tr>
+<tr class="r3"><td class="l"><b>Stage 1 hypertension</b></td><td><mark>140 to 159</mark></td><td><mark>90 to 99</mark></td></tr>
+<tr class="r4"><td class="l"><b>Stage 2 hypertension</b></td><td><mark>160 or higher</mark></td><td><mark>100 or higher</mark></td></tr>
+</table>
+<h3>Table 2 — Category</h3>
+<table>
+<tr><th>Category</th><th>Blood Pressure, mm Hg</th></tr>
+<tr class="r1"><td class="l"><b>Normal</b></td><td>SBP <mark>90–119</mark> and DBP <mark>60–79</mark></td></tr>
+<tr class="r2"><td class="l"><b>Prehypertension</b></td><td>SBP <mark>120–139</mark> or DBP <mark>80–89</mark></td></tr>
+<tr class="r3"><td class="l"><b>Stage 1 HTN</b></td><td>SBP <mark>140–159</mark> or DBP <mark>90–99</mark></td></tr>
+<tr class="r4"><td class="l"><b>Stage 2 HTN</b></td><td>SBP <mark>≥160</mark> or DBP <mark>≥100</mark></td></tr>
+</table>
+<div class="term"><b>SBP</b> = Systolic Blood Pressure (الانقباضي) • <b>DBP</b> = Diastolic Blood Pressure (الانبساطي) • <b>HTN</b> = Hypertension (ارتفاع ضغط الدم)</div>
+<div class="extra">💡 كلمة "or" في الجدول معناها: لو رقم واحد بس دخل في تصنيف أعلى، بتتحسب الحالة في التصنيف الأعلى. (شرح إضافي)</div>
+<div class="calc">
+  <b>🧪 Classifier / صنّف القراءة:</b><br>
+  SBP <input id="cs" type="number" value="150" oninput="classify()"> DBP <input id="cd" type="number" value="85" oninput="classify()">
+  <div class="out" id="clout"></div>
+</div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">⚠️</span><span class="t">5. Abnormalities of blood pressure<small class="ar">اضطرابات ضغط الدم</small></span><span class="chev">▾</span></button>
+<div class="body">
+<h3>⬆️ Hypertension</h3>
+<p class="en">Abnormal <mark>elevation</mark> of blood pressure. It may be due to <mark>peripheral vascular resistance</mark> and <mark>loss of elasticity</mark>.</p>
+<p class="ar">ارتفاع غير طبيعي في ضغط الدم. ممكن يحصل بسبب مقاومة الأوعية الطرفية وفقدان مرونة الشرايين.</p>
+<h3>⬇️ Hypotension</h3>
+<p class="en">Abnormal <mark>decrease</mark> in blood pressure. It may be due to <mark>hemorrhage, shock, wasting or debilitating disease</mark>.</p>
+<p class="ar">انخفاض غير طبيعي في الضغط. ممكن يحصل بسبب نزيف، صدمة (شوك)، هزال، أو مرض مُنهِك.</p>
+<div class="term"><b>Hemorrhage</b> = نزيف • <b>Shock</b> = هبوط حاد في الدورة الدموية • <b>Wasting</b> = هزال ونحول • <b>Debilitating</b> = بيضعّف الجسم</div>
+<h3>🧍 Postural (orthostatic) hypotension</h3>
+<p class="en"><mark>Postural (orthostatic) hypotension</mark> — shown in the lecture as a title only.</p>
+<p class="ar">انخفاض الضغط الوضعي (الانتصابي). في المحاضرة مكتوب كعنوان بس.</p>
+<div class="extra">💡 إضافة للفهم (مش في السلايد): هو هبوط في الضغط لما الواحد يقف فجأة من الرقاد أو القعدة، وبيحس بدوخة.</div>
+<h3>🥼 White coat hypertension</h3>
+<p class="en">Patients exhibit <mark>elevated blood pressure in a clinical setting</mark> but <mark>not in other settings</mark>. It is believed to be due to the <mark>anxiety</mark> some people experience during a clinic visit.</p>
+<p class="ar">المريض ضغطه بيطلع عالي في العيادة أو المستشفى بس، ولما يتقاس في مكان تاني بيبقى طبيعي. بيُعتقد إن السبب القلق والتوتر وقت زيارة العيادة.</p>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🏃</span><span class="t">6. Factors affecting BP<small class="ar">العوامل المؤثرة على الضغط</small></span><span class="chev">▾</span></button>
+<div class="body">
+<table>
+<tr><th>Factor</th><th>Effect on BP</th></tr>
+<tr><td class="l">🎂 <b>Age</b></td><td class="l"><mark>Low in children</mark>, <mark>increase in old age</mark><div class="ar">قليل في الأطفال وبيزيد مع كبر السن</div></td></tr>
+<tr><td class="l">🚹🚺 <b>Sex</b></td><td class="l"><mark>Low in females</mark> than males<div class="ar">أقل عند الإناث منه عند الذكور</div></td></tr>
+<tr><td class="l">🧍 <b>Body built</b></td><td class="l"><mark>Increase in fat heavy persons</mark><div class="ar">بيزيد عند الأشخاص السمان</div></td></tr>
+<tr><td class="l">🏃 <b>Exercise</b></td><td class="l"><mark>Increase</mark> BP<div class="ar">بيزوّد الضغط</div></td></tr>
+<tr><td class="l">😡 <b>Emotion</b></td><td class="l"><mark>Increase</mark> BP<div class="ar">بيزوّد الضغط</div></td></tr>
+<tr><td class="l">🍽️ <b>After eating</b></td><td class="l"><mark>Increase</mark> BP<div class="ar">بيزوّد الضغط</div></td></tr>
+<tr><td class="l">🧎 <b>Posture</b></td><td class="l"><mark>Increase in standing</mark> than sitting or lying<div class="ar">أعلى في الوقوف منه في القعدة أو الرقاد</div></td></tr>
+<tr><td class="l">💊 <b>Drugs</b></td><td class="l"><mark>Vasoconstrictor</mark>, increase BP<div class="ar">الأدوية اللي بتضيّق الأوعية بتزوّد الضغط</div></td></tr>
+<tr><td class="l">🍔 <b>Obesity</b></td><td class="l"><mark>Increase</mark> BP<div class="ar">السمنة بتزوّد الضغط</div></td></tr>
+<tr><td class="l">🩸 <b>Blood volume</b></td><td class="l"><mark>Decrease blood volume → decrease BP</mark><div class="ar">لما حجم الدم يقل الضغط بيقل</div></td></tr>
+</table>
+<div class="term"><b>Vasoconstrictor</b> = مادة بتضيّق الأوعية الدموية فالضغط يعلى</div>
+<h3>⬆️ Factors that increase BP (slide pictures)</h3>
+<p class="en">😡 Anger/emotion • 🚹 Male sex • ☕ Coffee • 🍔 Obesity/eating • 🏃 Exercise • 🥵 Stress/thirst • 👴 Old age</p>
+<p class="ar">غضب وانفعال، كونه ذكر، القهوة، السمنة والأكل، التمارين، الإجهاد، وكبر السن.</p>
+<h3>⬇️ Factors that decrease BP (slide pictures)</h3>
+<p class="en">🚺 Female sex • 🧘 Relaxation • 😴 Rest/sleep</p>
+<p class="ar">كونها أنثى، الاسترخاء، والراحة والنوم.</p>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🎯</span><span class="t">7. Purpose of measuring BP<small class="ar">الغرض من قياس الضغط</small></span><span class="chev">▾</span></button>
+<div class="body">
+<p class="en">1) To obtain <mark>baseline data</mark>.</p>
+<p class="ar">١) نحصل على قراءة أساسية نقارن بيها بعد كده.</p>
+<p class="en">2) To <mark>detect changes</mark> in patient's physical condition that may lead to the development of <mark>hypertension or hypotension</mark>.</p>
+<p class="ar">٢) نكتشف أي تغيّر في حالة المريض ممكن يوصّل لارتفاع أو انخفاض الضغط.</p>
+<p class="en">3) To <mark>aid in diagnosis and treatment</mark>.</p>
+<p class="ar">٣) نساعد في التشخيص والعلاج.</p>
+<div class="term"><b>Baseline</b> = القراءة الأساسية اللي بنقارن بيها.</div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🧰</span><span class="t">8. Equipment<small class="ar">الأدوات (دوس على كل جزء)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<p class="en">1) <mark>Sphygmomanometer</mark> (mercury or aneroid) 2) <mark>Stethoscope</mark> 3) <mark>Two iodine bowls</mark> 4) <mark>Alcohol sponges</mark></p>
+<p class="ar">١) جهاز قياس الضغط (زئبق أو عقربي) ٢) السماعة الطبية ٣) وعاءين يود ٤) قطن/إسفنج كحول.</p>
+<div class="term"><b>Sphygmomanometer</b> (سفيجمومانوميتر) = جهاز قياس الضغط • <b>Mercury</b> = زئبق (عمود زجاجي) • <b>Aneroid</b> = جهاز بميناء وعقرب من غير زئبق • <b>Digital</b> = جهاز رقمي بشاشة بيطلّع 120/80 والنبض لوحده</div>
+<h3>🔧 Parts of the sphygmomanometer</h3>
+<div class="chips" id="chips"></div>
+<div class="pdet" id="pdet">👆 Tap a part / دوس على جزء عشان تعرف وظيفته</div>
+<svg viewBox="0 0 300 120" style="width:100%;max-width:420px;display:block;margin:10px auto">
+ <rect x="10" y="30" width="110" height="60" rx="12" fill="#99f6e4" stroke="#0f766e" stroke-width="2"/>
+ <text x="65" y="65" text-anchor="middle" font-size="14" fill="#134e4a">CUFF</text>
+ <path d="M120 60 C150 60,150 30,180 30" stroke="#334155" stroke-width="4" fill="none"/>
+ <circle cx="205" cy="30" r="22" fill="#fff" stroke="#0f766e" stroke-width="3"/>
+ <line x1="205" y1="30" x2="218" y2="20" stroke="#dc2626" stroke-width="2"/>
+ <text x="205" y="68" text-anchor="middle" font-size="12" fill="#134e4a">DIAL</text>
+ <path d="M120 70 C150 70,150 95,185 95" stroke="#334155" stroke-width="4" fill="none"/>
+ <ellipse cx="205" cy="95" rx="18" ry="14" fill="#1f2937"/>
+ <text x="205" y="118" text-anchor="middle" font-size="12" fill="#134e4a">PUMP + VALVE</text>
+ <text x="270" y="60" font-size="26">🩺</text>
+</svg>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">📝</span><span class="t">9. Procedure — Preparation (steps 1–11)<small class="ar">الإجراء: التحضير</small></span><span class="chev">▾</span></button>
+<div class="body">
+<div class="extra">📌 ملحوظة: ترقيم السلايدات في المحاضرة بيتكرر (8 و 9 و 10 جُم مرتين). هنا الترتيب زي ما هو في المحاضرة بالظبط.</div>
+<div id="prep"></div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">📐</span><span class="t">10. Cuff size &amp; placement<small class="ar">اختيار مقاس الكُفّ ووضعه</small></span><span class="chev">▾</span></button>
+<div class="body">
+<h3>8) Choose suitable cuff size</h3>
+<p class="en">Upper arm blood pressure monitor cuff sizes (cuffs shown: SS, S, M, L):</p>
+<p class="ar">اختار مقاس الكُفّ المناسب لمحيط دراع المريض.</p>
+<table>
+<tr><th>Measurement (cm)</th><th>Measurement (inches)</th><th>Cuff size</th></tr>
+<tr><td><mark>18–22 cm</mark></td><td>7.1–8.7"</td><td><b>Small</b></td></tr>
+<tr><td><mark>22–32 cm</mark></td><td>8.8–12.8"</td><td><b>Medium</b></td></tr>
+<tr><td><mark>32–45 cm</mark></td><td>12.8–18"</td><td><b>Large</b></td></tr>
+</table>
+<div class="calc">
+  <b>📏 Arm circumference (cm) / محيط الدراع:</b>
+  <input id="arm" type="number" value="26" oninput="calcCuff()">
+  <div class="out" id="cuffout"></div>
+</div>
+<h3>9) Place the cuff so that…</h3>
+<p class="en">• <mark>Smooth surface</mark> over the patient's skin.</p><p class="ar">السطح الناعم من الكُفّ يبقى على جلد المريض.</p>
+<p class="en">• The <mark>inflatable bag (bladder) is centered over the brachial artery</mark>.</p><p class="ar">الكيس القابل للنفخ يبقى في نص الشريان العضدي بالظبط.</p>
+<p class="en">• The <mark>lower edge is about 3–4 cm above</mark> the inner aspect of the elbow (<mark>antecubital fossa</mark>).</p><p class="ar">الحافة السفلية فوق ثنية الكوع بـ 3–4 سم.</p>
+<div class="why">💡 Why: <b>To palpate brachial artery</b><div class="ar">عشان نعرف نحس بنبض الشريان العضدي.</div></div>
+<p class="en">• The <mark>tubing</mark> should leave the edge of the cuff <mark>nearer to the patient's elbow</mark>.</p><p class="ar">الخرطوم يخرج من الحافة الأقرب لكوع المريض.</p>
+<p class="en">• <mark>Wrap the cuff</mark> (not too tight or too loose).</p><p class="ar">لُفّ الكُفّ مش ضيق قوي ولا واسع قوي.</p>
+<div class="why">💡 Why: Too tight <b>compresses the artery</b>, too loose <b>interferes with the sound</b>.<div class="ar">الضيق قوي بيضغط على الشريان، والواسع بيشوّش على الصوت.</div></div>
+<p class="en">• <mark>Don't apply the cuff over the patient's clothes</mark> • <mark>Fasten it securely</mark>.</p><p class="ar">ما تلفّش الكُفّ فوق الهدوم، وثبّته كويس.</p>
+<div class="term"><b>Brachial artery</b> = الشريان العضدي (في الدراع) • <b>Antecubital fossa</b> = تجويف قدام الكوع • <b>Bladder</b> = الكيس المطاطي اللي بيتنفخ جوه الكُفّ</div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🤚</span><span class="t">11. Palpatory method (step 12)<small class="ar">الطريقة بالجَسّ (تفاعلي)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<p class="en"><b>a)</b> <mark>Palpate the radial pulse</mark>.</p><p class="ar">أ) حسّ نبض الشريان الكعبري (عند الرسغ).</p>
+<p class="en"><b>b)</b> <mark>Inflate the cuff gradually</mark> and determine the point at which the <mark>pulse disappears</mark>.</p><p class="ar">ب) انفخ الكُفّ بالتدريج وحدّد النقطة اللي النبض بيختفي عندها.</p>
+<p class="en"><b>c)</b> Inflate the cuff <mark>30 mmHg above</mark> the point at which the pulse disappeared.</p><p class="ar">ج) انفخ الكُفّ لحد 30 مللي زئبق فوق النقطة اللي النبض اختفى عندها.</p>
+<p class="en"><b>d)</b> <mark>Deflate the cuff slowly</mark> and determine the point at which the <mark>pulse returns</mark>. <mark>This is the systolic blood pressure.</mark></p><p class="ar">د) فُكّ الهوا ببطء وحدّد النقطة اللي النبض بيرجع عندها، وده هو الضغط الانقباضي.</p>
+<div class="term"><b>Palpate</b> = يجِسّ بإيده • <b>Radial pulse</b> = نبض الرسغ • <b>Deflate</b> = يفرّغ الهوا • <b>Inflate</b> = ينفخ</div>
+<div class="sim" id="sim1"></div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">👂</span><span class="t">12. Auscultatory method (step 13)<small class="ar">الطريقة بالسماعة (تفاعلي)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<p class="en"><b>a)</b> <mark>Palpate the pulsation of the brachial artery</mark> and place the <mark>diaphragm of the stethoscope</mark> at the antecubital space over the side of the brachial pulse.</p><p class="ar">أ) حسّ نبض الشريان العضدي وحط وش السماعة (الدايافرام) في تجويف الكوع فوق مكان النبض.</p>
+<p class="en"><b>b)</b> <mark>Close the valve</mark> and pump the cuff <mark>30 mmHg above</mark> the point at which the pulse disappeared.</p><p class="ar">ب) اقفل الفالف وانفخ الكُفّ 30 مللي زئبق فوق النقطة اللي النبض اختفى عندها.</p>
+<div class="why">💡 Why: <b>To avoid auscultatory gap</b><div class="ar">عشان نتجنّب الفجوة السمعية.</div></div>
+<div class="extra">💡 Auscultatory gap (إضافة للفهم): فترة صوت بيختفي مؤقتًا بين الانقباضي والانبساطي، فممكن نقرا الانقباضي غلط أقل من الحقيقي.</div>
+<p class="en"><b>c)</b> <mark>Loosen the thumb screw valve carefully</mark> (deflation) to let the air escape slowly while watching the mercury column; note the reading at the <mark>first thumping sound</mark> = <mark>systolic pressure (phase 1 Korotkoff sound)</mark>.</p><p class="ar">ج) افتح الفالف بحرص عشان الهوا يخرج ببطء وإنت متابع عمود الزئبق. أول صوت دقّ تسمعه هو الضغط الانقباضي (الصوت الأول لكوروتكوف).</p>
+<div class="why">💡 Why: Maintaining pressure in the cuff is <b>uncomfortable</b> for the patient and <b>obstructs venous return</b> from the lower arm.<div class="ar">إبقاء الضغط عالي في الكُفّ بيتعب المريض وبيعطّل رجوع الدم الوريدي من أسفل الدراع.</div></div>
+<p class="en"><b>d)</b> Continue to deflate, releasing pressure gradually; note the reading when the <mark>last beat is heard</mark>. This is the <mark>diastolic pressure (5th Korotkoff sound)</mark>.</p><p class="ar">د) كمّل فك الهوا بالتدريج، وسجّل القراءة عند آخر صوت تسمعه، وده الضغط الانبساطي (الصوت الخامس لكوروتكوف).</p>
+<div class="term"><b>Auscultation</b> = الاستماع بالسماعة • <b>Korotkoff sounds</b> = أصوات بتتسمع وإنت بتقيس الضغط</div>
+<h3>🖼️ The 3 steps in the lecture figure</h3>
+<table>
+<tr><th>Step</th><th>Cuff pressure</th><th>What happens</th></tr>
+<tr><td><b>1</b></td><td>Exceeds systolic</td><td>Brachial artery closed, <mark>no blood flow</mark>, no sound</td></tr>
+<tr><td><b>2</b></td><td>Below 120, above 70</td><td><mark>Intermittent blood flow</mark>, tapping sound</td></tr>
+<tr><td><b>3</b></td><td>Just below diastolic</td><td><mark>Blood flow fully restored</mark>, no sound</td></tr>
+</table>
+<p class="ar">الخطوة 1: الكُفّ أعلى من الانقباضي فالشريان مقفول ومفيش صوت. الخطوة 2: الدم بيعدّي على دفعات وبنسمع دقّ. الخطوة 3: الدم رجع كامل ومفيش صوت.</p>
+<div class="sim" id="sim2"></div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">✅</span><span class="t">13. After the measurement (steps 14–20)<small class="ar">بعد القياس</small></span><span class="chev">▾</span></button>
+<div class="body">
+<div id="post"></div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🔢</span><span class="t">Numbers to remember<small class="ar">الأرقام المهمة (دوس على الكارت)</small></span><span class="chev">▾</span></button>
+<div class="body">
+<div class="ngrid" id="ngrid"></div>
+</div></section>
+
+<section class="card"><button class="head" onclick="tg(this)"><span class="ico">🧠</span><span class="t">Quiz — 10 MCQs<small class="ar">كويز ١٠ أسئلة</small></span><span class="chev">▾</span></button>
+<div class="body">
+<div id="quiz"></div>
+</div></section>
+
+</div>
+
+<script>
+function tg(b){ b.parentNode.classList.toggle("open"); }
+function allCards(o){
+  var c=document.querySelectorAll(".card");
+  for(var i=0;i<c.length;i++){ if(o){c[i].classList.add("open");}else{c[i].classList.remove("open");} }
+}
+function toggleAr(){
+  document.body.classList.toggle("hide-ar");
+  var b=document.getElementById("arbtn");
+  b.textContent=document.body.classList.contains("hide-ar")?"👁️ Show Arabic / اظهر العربي":"🙈 Hide Arabic / اخفي العربي";
+}
+
+var hp="d", ht=null;
+function setHeart(p){
+  hp=p;
+  var h=document.getElementById("heart"), a=document.getElementById("artery");
+  var l=document.getElementById("hlabel"), al=document.getElementById("harlabel");
+  if(p==="s"){
+    h.className="heart sys"; a.className="artery sys"; a.textContent="→ → → → →";
+    l.innerHTML="Systole: contracts &amp; empties — 120";
+    al.textContent="القلب بينقبض ويضخ الدم، الضغط أعلى حاجة";
+  } else {
+    h.className="heart dia"; a.className="artery dia"; a.textContent="→ → →";
+    l.innerHTML="Diastole: relaxes &amp; fills — 80";
+    al.textContent="القلب بيرتخي ويتملي، الضغط أقل حاجة";
+  }
+}
+function autoHeart(){
+  var b=document.getElementById("hauto");
+  if(ht){ clearInterval(ht); ht=null; b.textContent="▶ Auto beat"; }
+  else { ht=setInterval(function(){ setHeart(hp==="s"?"d":"s"); },1400); b.textContent="⏸ Stop"; }
+}
+
+function calcPP(){
+  var s=parseFloat(document.getElementById("ps").value), d=parseFloat(document.getElementById("pd").value);
+  var o=document.getElementById("ppout");
+  if(isNaN(s)||isNaN(d)){ o.textContent=""; return; }
+  var pp=s-d, msg;
+  if(pp<30){ msg="Lower than the normal 30–50 (أقل من الطبيعي)"; }
+  else if(pp>50){ msg="Higher than the normal 30–50 (أعلى من الطبيعي)"; }
+  else { msg="Normal 30–50 ✅ (طبيعي)"; }
+  o.textContent="Pulse pressure = "+pp+" mmHg → "+msg;
+}
+function classify(){
+  var s=parseFloat(document.getElementById("cs").value), d=parseFloat(document.getElementById("cd").value);
+  var o=document.getElementById("clout");
+  if(isNaN(s)||isNaN(d)){ o.textContent=""; return; }
+  var lv=0;
+  if(s>=160||d>=100){ lv=4; }
+  else if(s>=140||d>=90){ lv=3; }
+  else if(s>=120||d>=80){ lv=2; }
+  else { lv=1; }
+  var names=["","Normal ✅ (طبيعي)","Prehypertension 🟡 (ما قبل الضغط العالي)","Stage 1 hypertension 🟠 (ضغط عالي مرحلة 1)","Stage 2 hypertension 🔴 (ضغط عالي مرحلة 2)"];
+  var extra="";
+  if(lv===1&&(s<90||d<60)){ extra=" — below the table's normal range of 90/60 (تحت حدود الجدول)"; }
+  o.textContent=s+"/"+d+" → "+names[lv]+extra;
+}
+function calcCuff(){
+  var v=parseFloat(document.getElementById("arm").value);
+  var o=document.getElementById("cuffout");
+  if(isNaN(v)){ o.textContent=""; return; }
+  var m;
+  if(v<18){ m="Smaller than the table range (أصغر من حدود الجدول)"; }
+  else if(v<=22){ m="Small cuff (18–22 cm)"; }
+  else if(v<=32){ m="Medium cuff (22–32 cm)"; }
+  else if(v<=45){ m="Large cuff (32–45 cm)"; }
+  else { m="Bigger than the table range (أكبر من حدود الجدول)"; }
+  o.textContent="→ "+m;
+}
+
+var parts=[
+ ["Pump","🫳 A pump inflates the cuff to stop the blood flow in your artery for a few seconds.","الطُّلمبة بتنفخ الكُفّ عشان توقّف الدم في الشريان لثواني."],
+ ["Valve","🔩 A valve lets some air out of the cuff, which allows the blood flow to start again.","الفالف بيطلّع شوية هوا من الكُفّ فالدم يرجع يجري تاني."],
+ ["Dial","🕐 A numbered dial or a column of mercury can be used to record the blood pressure reading.","الميناء المرقّم أو عمود الزئبق بنقرا منه قراءة الضغط."],
+ ["Cuff","🧣 A cuff is wrapped around your upper arm.","الكُفّ بيتلف حوالين الدراع من فوق."],
+ ["Stethoscope","🩺 Used to hear the sound of blood rushing back through the artery. The first thumping sound is the systolic BP. When the thumping sound is no longer heard, that is the diastolic pressure.","بنسمع بيها صوت رجوع الدم في الشريان. أول دقّ = الانقباضي، ولما الدقّ يختفي = الانبساطي."]
+];
+(function(){
+  var c=document.getElementById("chips"), det=document.getElementById("pdet");
+  parts.forEach(function(p){
+    var b=document.createElement("button"); b.className="chip"; b.textContent=p[0];
+    b.onclick=function(){
+      var all=c.querySelectorAll(".chip");
+      for(var k=0;k<all.length;k++){ all[k].classList.remove("on"); }
+      b.classList.add("on");
+      det.innerHTML="<div class='en'>"+p[1]+"</div><div class='ar'>"+p[2]+"</div>";
+    };
+    c.appendChild(b);
+  });
+})();
+
+var prep=[
+ ["1","<mark>Hand washing</mark>","غسيل الإيدين","To <mark>prevent cross infection</mark>","عشان نمنع نقل العدوى"],
+ ["2","<mark>Prepare equipment</mark> &amp; check efficiency of equipment","جهّز الأدوات وتأكد إنها شغالة كويس","To <mark>save time and energy</mark>; for <mark>accurate measurement</mark>","توفير وقت ومجهود وقياس دقيق"],
+ ["3","<mark>Take equipment to bedside</mark>","خُد الأدوات لجنب سرير المريض","To save time and effort; <mark>to avoid patient discomfort</mark>","توفير وقت ومجهود وراحة المريض"],
+ ["4","<mark>Explain procedure</mark> to the patient","اشرح الإجراء للمريض","To <mark>gain patient cooperation</mark>; <mark>decrease fear and anxiety</mark>","عشان يتعاون معاك ويقل خوفه وقلقه"],
+ ["5","<mark>Examine the patient's previous BP recording</mark>","اطلع على قراءات الضغط السابقة للمريض","To <mark>obtain data base</mark> about patient's condition &amp; progress (steps 5–7)","عشان تاخد معلومات عن حالة المريض وتطوره (للخطوات 5 و6 و7)"],
+ ["6","<mark>Ascertain the medical diagnosis</mark> and any history of problems that may affect his/her BP","اتأكد من تشخيص المريض وأي مشاكل قديمة ممكن تأثر على ضغطه",null,null],
+ ["7","Determine if the patient is <mark>taking any medications</mark> that may affect BP","اعرف لو بياخد أدوية ممكن تأثر على الضغط",null,null],
+ ["8","Place patient in <mark>comfortable recumbent or sitting position</mark> with <mark>arm supported</mark> and <mark>palm upward</mark>","خلّي المريض في وضع مريح (نايم أو قاعد) والدراع مسنود وكف الإيد لفوق","BP is <mark>most accurate if muscles are relaxed</mark>","الضغط بيطلع أدق لما العضلات تكون مرتخية"],
+ ["9","Place the <mark>mercury tube apparatus on the table at the level of patient's heart</mark> and position yourself so your <mark>eyes are on a level with the seal</mark> on apparatus","حط جهاز الزئبق على الترابيزة في مستوى قلب المريض، وقف بحيث عينك في مستوى علامة الزئبق","To <mark>facilitate accurate reading</mark>","عشان القراءة تبقى دقيقة"],
+ ["10","<mark>Expose patient's arm</mark> by moving sleeves up","اكشف دراع المريض وطلّع الكُم لفوق","<mark>Tight sleeve will interfere</mark> with accurate reading","الكُم الضيق بيبوّظ دقة القراءة"],
+ ["8","<mark>Choose suitable cuff size</mark> (see cuff card)","اختار مقاس كُفّ مناسب (شوف كارت الكُفّ)",null,null],
+ ["9","<mark>Place the cuff</mark> correctly (see cuff card)","حط الكُفّ صح (شوف كارت الكُفّ)","To palpate brachial artery","عشان تحس بنبض الشريان العضدي"],
+ ["10","<mark>Wipe the diaphragm and earpiece</mark> of stethoscope with <mark>alcohol</mark>","امسح وش السماعة وسماعات الودن بالكحول","To <mark>prevent cross infection</mark> between staff and between patients","عشان نمنع العدوى بين الطاقم وبين المرضى"],
+ ["11","Place the stethoscope in the ear with the <mark>earpiece directed forward</mark>","حط السماعة في ودنك وطرف الودن ناحية قدام","<mark>According to anatomical position</mark> of external auditory canal; to <mark>facilitate hearing</mark>","حسب وضع قناة الودن الخارجية وعشان السمع يبقى أوضح"]
+];
+var post=[
+ ["14","<mark>Release air from cuff completely</mark>, repeat the procedure if needed (<mark>wait 30–60 seconds</mark> before taking BP again)","فرّغ الهوا من الكُفّ بالكامل، وكرّر القياس لو محتاج بعد ما تستنى 30–60 ثانية","Maintaining pressure in the cuff is <mark>uncomfortable</mark> and <mark>obstructs venous return</mark> from the lower arm","إبقاء الضغط بيتعب المريض وبيعطّل رجوع الدم الوريدي"],
+ ["15","<mark>Remove cuff</mark> from patient's arm","شيل الكُفّ من دراع المريض",null,null],
+ ["16","Check to see that the <mark>patient is comfortable</mark>","اتأكد إن المريض مرتاح",null,null],
+ ["17","<mark>Wipe the earpiece and diaphragm</mark> with alcohol","امسح سماعات الودن ووش السماعة بالكحول",null,null],
+ ["18","<mark>Return the equipment</mark> to proper place","رجّع الأدوات مكانها","To <mark>save time for other persons</mark>","عشان توفر وقت للناس التانية"],
+ ["19","<mark>Record</mark> (time, reading, position, site of measurement)","سجّل (الوقت، القراءة، وضع المريض، مكان القياس)","For <mark>medical record</mark> and written communication; for <mark>legal documentation</mark>","للسجل الطبي والتواصل الكتابي والتوثيق القانوني"],
+ ["20","<mark>Report any changes</mark> or deviation from normal","بلّغ عن أي تغيّر أو حاجة مش طبيعية","So <mark>appropriate action can be taken</mark>","عشان يتاخد الإجراء المناسب"]
+];
+function renderSteps(id,arr){
+  var h="";
+  for(var i=0;i<arr.length;i++){
+    var s=arr[i];
+    h+="<div class='step'><div class='n'>"+s[0]+"</div><div class='c'><div class='en'>"+s[1]+"</div><div class='ar'>"+s[2]+"</div>";
+    if(s[3]){ h+="<div class='why'>💡 Why: "+s[3]+"<div class='ar'>"+s[4]+"</div></div>"; }
+    h+="</div></div>";
+  }
+  document.getElementById(id).innerHTML=h;
+}
+renderSteps("prep",prep);
+renderSteps("post",post);
+
+function initSim(id,mode){
+  var SYS=120, DIA=70, P=0, timer=null, sys=null, dia=null;
+  var root=document.getElementById(id);
+  var title=(mode==="pal")?"🤚 Palpatory simulator (radial pulse)":"👂 Auscultatory simulator (stethoscope)";
+  root.innerHTML="<b>"+title+"</b><div class='ar'>مريض ضغطه الحقيقي 120/70 زي الصورة في المحاضرة. انفخ لحد حوالي 150 (30 فوق النقطة) وبعدين فُكّ الهوا ببطء.</div>"+
+   "<div class='simrow'><div class='mer'><div class='merfill'></div></div>"+
+   "<div><div class='pv'>0</div><div class='unit'>mmHg (cuff)</div></div>"+
+   "<div class='tubewrap'><div class='tube closed'></div><div class='tlabel'>artery</div></div></div>"+
+   "<div class='status'></div>"+
+   "<div class='btns'><button class='btn' data-a='pump'>🫳 Pump +10</button><button class='btn' data-a='auto'>⏬ Auto-deflate</button><button class='btn' data-a='step'>− Release 2</button><button class='btn ghost' data-a='reset'>↺ Reset</button></div>"+
+   "<div class='read'></div>";
+  var fill=root.querySelector(".merfill"), pv=root.querySelector(".pv"), tube=root.querySelector(".tube");
+  var st=root.querySelector(".status"), rd=root.querySelector(".read"), autoBtn=root.querySelector("[data-a=auto]");
+  function render(){
+    fill.style.height=(P/220*100)+"%";
+    pv.textContent=P;
+    var cls, msg;
+    if(P===0){ cls="open"; msg="👆 Pump the cuff first / انفخ الكُفّ الأول"; }
+    else if(P>SYS){
+      cls="closed";
+      msg=(mode==="pal")?"✋ No radial pulse (artery closed)":"🔇 Cuff &gt; systolic: artery closed, NO sound";
+    } else if(P>DIA){
+      cls=(mode==="pal")?"open":"tap";
+      msg=(mode==="pal")?"💓 Pulse is felt again":"🔊 Tap… tap… (Korotkoff sounds) — intermittent flow";
+    } else {
+      cls="open";
+      msg=(mode==="pal")?"💓 Pulse is felt":"🔇 Cuff &lt; diastolic: full flow, sound disappears";
+    }
+    tube.className="tube "+cls;
+    st.innerHTML=msg;
+    var r="";
+    if(sys!==null){ r+="Systolic ≈ "+sys+" mmHg"; }
+    if(mode==="aus"&&dia!==null){ r+="  |  Diastolic ≈ "+dia+" mmHg"; }
+    if(mode==="aus"&&sys!==null&&dia!==null){ r+="  →  "+sys+"/"+dia; }
+    rd.textContent=r;
+  }
+  function setP(n){
+    var old=P; P=n;
+    if(n>old&&n>SYS){ sys=null; dia=null; }
+    if(n<old){
+      if(old>SYS&&n<=SYS&&sys===null){ sys=n; }
+      if(mode==="aus"&&old>DIA&&n<=DIA&&dia===null){ dia=n; }
+    }
+    render();
+  }
+  function stop(){ if(timer){ clearInterval(timer); timer=null; } autoBtn.textContent="⏬ Auto-deflate"; }
+  root.onclick=function(e){
+    var a=e.target.getAttribute("data-a");
+    if(!a){ return; }
+    if(a==="pump"){ stop(); setP(Math.min(220,P+10)); }
+    else if(a==="step"){ stop(); setP(Math.max(0,P-2)); }
+    else if(a==="reset"){ stop(); sys=null; dia=null; P=0; render(); }
+    else if(a==="auto"){
+      if(timer){ stop(); return; }
+      if(P===0){ return; }
+      autoBtn.textContent="⏸ Stop";
+      timer=setInterval(function(){
+        if(P<=0){ stop(); return; }
+        setP(Math.max(0,P-2));
+      },110);
+    }
+  };
+  render();
+}
+initSim("sim1","pal");
+initSim("sim2","aus");
+
+var nums=[
+ ["120 / 80","Normal range limit","أقل من 120 للانقباضي وأقل من 80 للانبساطي هو الطبيعي."],
+ ["≤119 / ≤79","Normal (Table 1)","الضغط الطبيعي حسب الجدول الأول."],
+ ["90–119 / 60–79","Normal (Table 2)","الطبيعي حسب الجدول التاني: SBP من 90 لـ 119 و DBP من 60 لـ 79."],
+ ["120–139 / 80–89","Prehypertension","ما قبل الضغط العالي."],
+ ["140–159 / 90–99","Stage 1 HTN","ضغط عالي مرحلة أولى."],
+ ["≥160 / ≥100","Stage 2 HTN","ضغط عالي مرحلة تانية."],
+ ["30–50","Pulse pressure (mmHg)","الفرق الطبيعي بين الانقباضي والانبساطي."],
+ ["30 mmHg","Inflate above…","انفخ الكُفّ 30 فوق النقطة اللي النبض اختفى عندها."],
+ ["3–4 cm","Cuff lower edge","الحافة السفلية للكُفّ فوق ثنية الكوع بـ 3–4 سم."],
+ ["30–60 sec","Wait before repeating","استنى 30–60 ثانية قبل ما تعيد القياس."],
+ ["18–22 cm","Small cuff","محيط دراع 18–22 سم يحتاج كُفّ صغير (7.1–8.7 بوصة)."],
+ ["22–32 cm","Medium cuff","كُفّ متوسط (8.8–12.8 بوصة)."],
+ ["32–45 cm","Large cuff","كُفّ كبير (12.8–18 بوصة)."],
+ ["Phase 1","Korotkoff → Systolic","أول صوت دقّ = الانقباضي."],
+ ["5th sound","Korotkoff → Diastolic","آخر صوت (الخامس) = الانبساطي."]
+];
+(function(){
+  var g=document.getElementById("ngrid");
+  nums.forEach(function(n){
+    var d=document.createElement("div"); d.className="ncard";
+    d.innerHTML="<div class='nn'>"+n[0]+"</div><div class='nl'>"+n[1]+"</div><div class='nm ar'>"+n[2]+"</div>";
+    d.onclick=function(){ d.classList.toggle("on"); };
+    g.appendChild(d);
+  });
+})();
+
+var Q=[
+ {q:"Systolic blood pressure is recorded during:",ar:"الضغط الانقباضي بيتسجل أثناء:",o:["Ventricular relaxation","Maximum ventricular contraction","Filling of the heart only","Just before a new contraction"],a:1,ex:"الانقباضي هو أكبر ضغط وقت أقصى انقباض للبطين."},
+ {q:"The normal pulse pressure is:",ar:"ضغط النبض الطبيعي هو:",o:["10–20 mmHg","30–50 mmHg","60–80 mmHg","90–120 mmHg"],a:1,ex:"ضغط النبض = الفرق بين الانقباضي والانبساطي والطبيعي 30–50."},
+ {q:"A reading of 150/95 mmHg is classified as:",ar:"قراءة 150/95 بتتصنف:",o:["Prehypertension","Normal","Stage 1 hypertension","Stage 2 hypertension"],a:2,ex:"150 ضمن 140–159 و95 ضمن 90–99 يعني المرحلة الأولى."},
+ {q:"White coat hypertension is believed to be due to:",ar:"ضغط المعطف الأبيض سببه المعتقد:",o:["Obesity","Anxiety during a clinic visit","Loss of blood","Exercise"],a:1,ex:"الضغط بيعلى في العيادة بسبب القلق."},
+ {q:"The lower edge of the cuff is placed above the antecubital fossa by about:",ar:"الحافة السفلية للكُفّ بتتحط فوق ثنية الكوع بحوالي:",o:["1 cm","3–4 cm","8–10 cm","15 cm"],a:1,ex:"المسافة الصح 3–4 سم."},
+ {q:"Why do we pump the cuff 30 mmHg above the point at which the pulse disappears?",ar:"ليه بننفخ الكُفّ 30 مللي زئبق فوق النقطة اللي النبض اختفى عندها؟",o:["To avoid cross infection","To avoid auscultatory gap","To increase patient anxiety","To warm the arm"],a:1,ex:"عشان نتجنب الفجوة السمعية (auscultatory gap)."},
+ {q:"The diastolic pressure is the reading at the:",ar:"الضغط الانبساطي هو القراءة عند:",o:["First Korotkoff sound","Second Korotkoff sound","5th Korotkoff sound (last beat heard)","Pulse disappearing"],a:2,ex:"الانبساطي عند آخر صوت يتسمع (الصوت الخامس)، والانقباضي عند الصوت الأول."},
+ {q:"Which cuff size is suitable for an arm circumference of 25 cm?",ar:"أنهي مقاس كُفّ مناسب لمحيط دراع 25 سم؟",o:["Small","Medium","Large","No cuff needed"],a:1,ex:"22–32 سم يحتاج كُفّ متوسط."},
+ {q:"Which factor DECREASES blood pressure?",ar:"أنهي عامل بيقلل الضغط؟",o:["Exercise","Obesity","Decrease in blood volume","Standing position"],a:2,ex:"لما حجم الدم يقل الضغط بيقل، والباقي بيزوّده."},
+ {q:"Hypotension may be due to:",ar:"انخفاض الضغط ممكن يحصل بسبب:",o:["Loss of elasticity of arteries","Peripheral vascular resistance","Hemorrhage and shock","Coffee"],a:2,ex:"النزيف والصدمة من أسباب الانخفاض، أما فقدان المرونة والمقاومة فمن أسباب الارتفاع."}
+];
+var ans=[], score=0, done=0;
+function renderQuiz(){
+  ans=[]; score=0; done=0;
+  var h="";
+  for(var i=0;i<Q.length;i++){
+    h+="<div class='q' id='q"+i+"'><div class='en'><b>"+(i+1)+". "+Q[i].q+"</b></div><div class='ar'>"+Q[i].ar+"</div>";
+    for(var j=0;j<Q[i].o.length;j++){
+      h+="<button class='opt' onclick='pick("+i+","+j+")'>"+String.fromCharCode(65+j)+") "+Q[i].o[j]+"</button>";
+    }
+    h+="<div class='fb'></div></div>";
+  }
+  h+="<div id='res'></div><button class='btn' onclick='renderQuiz()'>↺ Restart / ابدأ من الأول</button>";
+  document.getElementById("quiz").innerHTML=h;
+}
+function pick(i,j){
+  if(ans[i]!==undefined){ return; }
+  ans[i]=j; done++;
+  var btns=document.querySelectorAll("#q"+i+" .opt");
+  for(var k=0;k<btns.length;k++){
+    btns[k].disabled=true;
+    if(k===Q[i].a){ btns[k].classList.add("ok"); }
+    else if(k===j){ btns[k].classList.add("bad"); }
+  }
+  var fb=document.querySelector("#q"+i+" .fb");
+  if(j===Q[i].a){ score++; fb.innerHTML="✅ <b>صح!</b>"; }
+  else { fb.innerHTML="❌ <b>غلط</b> — الإجابة الصح: "+String.fromCharCode(65+Q[i].a)+") "+Q[i].o[Q[i].a]+"<div class='ar'>"+Q[i].ex+"</div>"; }
+  if(done===Q.length){
+    var r=document.getElementById("res");
+    r.style.display="block";
+    var m=(score>=9)?"🔥 ممتاز!":(score>=7)?"👏 كويس جدًا":(score>=5)?"🙂 محتاج مراجعة بسيطة":"📚 راجع المحاضرة تاني";
+    r.textContent="Score: "+score+" / "+Q.length+"  —  "+m;
+    r.scrollIntoView({behavior:"smooth",block:"center"});
+  }
+}
+renderQuiz();
+setHeart("d");
+calcPP(); classify(); calcCuff();
+</script>
+</body>
+</html>
