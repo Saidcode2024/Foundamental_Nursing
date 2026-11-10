@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142D4E">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Nursing Academy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Nursing Academy · Fundamentals of Nursing</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#4A90C2"/><path d="M17 9h6v8h8v6h-8v8h-6v-8H9v-6h8z" fill="#fff"/></svg>
+  <div><b>Nursing Academy</b><span>Fundamentals of Nursing · أساسيات التمريض</span></div>
+  <button type="button" id="install" class="btn top-install" hidden>Install app</button>
+</header>
+<main class="wrap" id="view"><p class="empty">Loading...</p></main>
+<script>
+// If anything fails, show the reason instead of a stuck "Loading..."
+window.addEventListener('error', function (e) {
+  var v = document.getElementById('view');
+  if (v && /Loading/.test(v.textContent)) v.innerHTML = '<div class="err"><b>Error:</b> ' + e.message + '<br>' + (e.filename || '') + '</div>';
+});
+</script>
+<script src="data/lectures.js"></script>
+<script src="js/img.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/lectures.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

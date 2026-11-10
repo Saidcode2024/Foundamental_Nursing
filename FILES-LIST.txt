@@ -1,0 +1,71 @@
+Files the site expects (same names, same folders)
+====================================================
+PAGE  = the HTML file you create inside lectures/
+IMAGE = picture in images/Theory or images/Practical (.jpg best; .jpeg .png .webp also work)
+
+#01 Theory 1: Infection Control
+   PAGE : lectures/Infection_Control.html   (not created yet)
+   IMAGE: images/Theory/Infection_Control.jpg
+#02 Practical 1: Hand Hygiene
+   PAGE : lectures/Hand_Hygiene.html   (not created yet)
+   IMAGE: images/Practical/Hand_Hygiene.jpg
+#03 Theory 2: Body Mechanics
+   PAGE : lectures/Body_Mechanics.html   (not created yet)
+   IMAGE: images/Theory/Body_Mechanics.jpg
+#04 Practical 2: Gloving
+   PAGE : lectures/Gloving.html   (not created yet)
+   IMAGE: images/Practical/Gloving.jpg
+#05 Theory 3: Mobility
+   PAGE : lectures/Mobility.html
+   IMAGE: images/Theory/Mobility.jpg
+#06 Practical 3: Personal Protective Equipment (PPE)
+   PAGE : lectures/PPE.html   (not created yet)
+   IMAGE: images/Practical/PPE.jpg
+#07 Theory 4: Body Temperature
+   PAGE : lectures/Body_Temperature.html   (not created yet)
+   IMAGE: images/Theory/Body_Temperature.jpg
+#08 Practical 4: Body Mechanics
+   PAGE : lectures/Body_Mechanics.html   (not created yet)
+   IMAGE: images/Practical/Body_Mechanics.jpg
+#09 Theory 5: Pulse and Blood Pressure
+   PAGE : lectures/Pulse_and_Blood-Pressure.html   (not created yet)
+   IMAGE: images/Theory/Pulse_and_Blood_Pressure.jpg
+#10 Practical 5: Body Temperature
+   PAGE : lectures/Body_Temperature.html   (not created yet)
+   IMAGE: images/Practical/Body_Temperature.jpg
+#11 Theory 6: Respiration and Oxygenation
+   PAGE : lectures/Respiration_and_Oxygenation.html   (not created yet)
+   IMAGE: images/Theory/Respiration_and_Oxygenation.jpg
+#12 Practical 6: Pulse and Respiration
+   PAGE : lectures/Pulse_and_Respiration.html   (not created yet)
+   IMAGE: images/Practical/Pulse_and_Respiration.jpg
+#13 Theory 7: Assessment of Patients' Health-Illness Status
+   PAGE : lectures/Assessment_of_Patients_Health_Illness_Status.html   (not created yet)
+   IMAGE: images/Theory/Assessment_of_Patients_Health_Illness_Status.jpg
+#14 Practical 7: Blood Pressure
+   PAGE : lectures/Blood_Pressure.html   (not created yet)
+   IMAGE: images/Practical/Blood_Pressure.jpg
+#15 Theory 8: Personal Hygiene
+   PAGE : lectures/Personal_Hygiene.html   (not created yet)
+   IMAGE: images/Theory/Personal_Hygiene.jpg
+#16 Practical 8: Positioning, Moving, and Transferring Clients
+   PAGE : lectures/Positioning_Moving_and_Transferring_Clients.html   (not created yet)
+   IMAGE: images/Practical/Positioning_Moving_and_Transferring_Clients.jpg
+#17 Theory 9: Pain assessment and management
+   PAGE : lectures/Pain_assessment_and_management.html   (not created yet)
+   IMAGE: images/Theory/Pain_assessment_and_management.jpg
+#18 Practical 9: Hygienic care
+   PAGE : lectures/Hygienic_care.html   (not created yet)
+   IMAGE: images/Practical/Hygienic_care.jpg
+#19 Theory 10: Health Illness and Disparities
+   PAGE : lectures/Health_Illness_and_Disparities.html   (not created yet)
+   IMAGE: images/Theory/Health_Illness_and_Disparities.jpg
+#20 Practical 10: Bed Making Procedure
+   PAGE : lectures/Bed_Making_Procedure.html   (not created yet)
+   IMAGE: images/Practical/Bed_Making_Procedure.jpg
+#21 Theory 11: Communication
+   PAGE : lectures/Communication.html   (not created yet)
+   IMAGE: images/Theory/Communication.jpg
+#22 Theory 12: Safety in Nursing care Delivery
+   PAGE : lectures/Safety_in_Nursing_care_Delivery.html   (not created yet)
+   IMAGE: images/Theory/Safety_in_Nursing_care_Delivery.jpg
